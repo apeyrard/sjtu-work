@@ -3,7 +3,9 @@
 
 import argparse
 import sys
+import numpy as np
 from PIL import Image
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description='Choose how to process input image.')
 
@@ -21,11 +23,20 @@ except FileNotFoundError as e:
     sys.exit("Error : file not found")
 
 data = list(im.getdata())
-hist = [0] * 256
+histArray = [0] * 256
 for pixel in data:
     if not (pixel[0] == pixel[1] == pixel[2]):
         sys.exit("Error : Image is not grayscale")
     else:
-        hist[pixel[0]] += 1
+        histArray[pixel[0]] += 1
+
+histList = list(histArray)
+
+plt.bar(np.arange(256), histList)
+plt.ylabel('Nb of pixels')
+plt.xlabel('Value')
+plt.xlim(0, 255)
+
+plt.show()
 
 
