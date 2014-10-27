@@ -23,20 +23,56 @@ except FileNotFoundError as e:
     sys.exit("Error : file not found")
 
 data = list(im.getdata())
-histArray = [0] * 256
+
+maxPix = 0
 for pixel in data:
-    if not (pixel[0] == pixel[1] == pixel[2]):
-        sys.exit("Error : Image is not grayscale")
-    else:
-        histArray[pixel[0]] += 1
+    if pixel > maxPix:
+        maxPix = pixel
+
+histArray = [0] * (maxPix+1)
+for pixel in data:
+    histArray[pixel] += 1
 
 histList = list(histArray)
 
-plt.bar(np.arange(256), histList)
+plt.bar(np.arange(maxPix+1), histList)
 plt.ylabel('Nb of pixels')
 plt.xlabel('Value')
-plt.xlim(0, 255)
+plt.xlim(0, maxPix)
 
 plt.show()
 
+if args.enhance==True:
+    total = sum(histList)
+    def transform(value):
+        tmpSum = 0
+        for j in range(value):
+            tmpSum += histList[j]/total
+        return tmpSum
 
+    newim = Image.new(im.mode, im.size)
+    ptr = newim.load()
+    for i, pixel in enumerate(data):
+        newValue = round(transform(pixel)*maxPix)
+        ptr[i%im.size[0], i//im.size[0]] = newValue
+    newim.show()
+
+    data = list(newim.getdata())
+
+    maxPix = 0
+    for pixel in data:
+        if pixel > maxPix:
+            maxPix = pixel
+
+    histArray = [0] * (maxPix+1)
+    for pixel in data:
+        histArray[pixel] += 1
+
+    histList = list(histArray)
+
+    plt.bar(np.arange(maxPix+1), histList)
+    plt.ylabel('Nb of pixels')
+    plt.xlabel('Value')
+    plt.xlim(0, maxPix)
+
+    plt.show()
