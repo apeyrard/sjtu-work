@@ -1,0 +1,44 @@
+\documentclass[10pt]{article}
+\author{Alex Peyrard}
+\title{Information and coding theory assignment 2}
+
+\begin{document}
+\maketitle
+
+\section{$H(X,Y|Z)$}
+
+\[H(X,Y|Z)=-\sum\limits_{x,y,z}\mathcal{P}(x,y,z)\log(\mathcal{P}(x,y|z))\]
+\[H(X,Y|Z)=-\sum\limits_{x,y,z}\mathcal{P}(x,y,z)\log(\frac{\mathcal{P}(x,y,z)}{\mathcal{P}(z)})\]
+\[H(X,Y|Z)=-(1/4\log(\frac{1/4}{1/2})+1/4\log(\frac{1/4}{1/2})+1/4\log(\frac{1/4}{1/2})+1/4\log(\frac{1/4}{1/2})+0+0+0+0)\]
+\[H(X,Y|Z)=-\log(\frac{1/4}{1/2})\]
+\[H(X,Y|Z)=\log(2)\]
+
+\section{$H(X,Y|Z=0)$}
+
+\[H(X,Y|Z=0)=-\sum\limits_{x,y,z=0}\mathcal{P}(x,y,z=0)\log(\mathcal{P}(x,y|z=0))\]
+\[H(X,Y|Z=0)=-\sum\limits_{x,y,z=0}\mathcal{P}(x,y,z=0)\log(\frac{\mathcal{P}(x,y,z=0)}{\mathcal{P}(z=0)})\]
+\[H(X,Y|Z=0)=-(1/4\log(\frac{1/4}{1/2})+1/4\log(\frac{1/4}{1/2})+0+0)\]
+\[H(X,Y|Z=0)=-1/2\log(\frac{1/4}{1/2})\]
+\[H(X,Y|Z=0)=1/2\log(2)\]
+
+\section{$I(X,Y|Z)$}
+
+\[I(X,Y|Z)=\sum\limits_{x,y,z}\mathcal{P}(x,y,z)\log(\frac{\mathcal{P}(x,y|z)}{\mathcal{P}(x|z)\mathcal{P}(y|z)})\]
+\[I(X,Y|Z)=4*1/4\log(\frac{1/2}{1/4*1/4})\]
+\[I(X,Y|Z)=3\]
+
+\section{$I(X,Y|Z=0)$}
+
+\[I(X,Y|Z=0)=\sum\limits_{x,y,z=0}\mathcal{P}(x,y,z=0)\log(\frac{\mathcal{P}(x,y|z=0)}{\mathcal{P}(x|z=0)\mathcal{P}(y|z=0)})\]
+\[I(X,Y|Z=0)=2*1/4\log(\frac{1/2}{1/4*1/4})\]
+\[I(X,Y|Z)=3/2\]
+
+\section{Proof of $I(X,Y)=0$}
+
+\[I(X,Y)=\sum\limits_{x,y}\mathcal{P}(x,y)\log(\frac{\mathcal{P}(x,y)}{\mathcal{P}(x)\mathcal{P}(y)})\]
+\[I(X,Y)=4*1/4\log(\frac{1/4}{1/2*1/2})\]
+\[I(X,Y)=\log(1)\]
+\[I(X,Y)=0\]
+QED
+
+\end{document}

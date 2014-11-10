@@ -1,0 +1,42 @@
+\documentclass[10pt]{article}
+\author{Alex Peyrard}
+\title{Information and coding theory assignment 3}
+
+\begin{document}
+\maketitle
+
+\section{Inequalities}
+Given $U\rightarrow X\rightarrow Y\rightarrow V$ a Markov chain, we can find :
+\[I(U,V)\leq I(U,Y)\]
+\[I(U,V)\leq I(X,V)\]
+
+\[I(U,V)\leq I(U,X)\]
+\[I(U,V)\leq I(X,Y)\]
+\[I(U,V)\leq I(Y,V)\]
+
+\[I(U,Y)\leq I(U,X)\]
+\[I(U,Y)\leq I(X,Y)\]
+
+\[I(X,V)\leq I(X,Y)\]
+\[I(X,V)\leq I(Y,V)\]
+
+\section{Fano's inequality}
+
+\section{Kraft's inequality}
+We want to prove that for a uniquely decodable code, then $\sum\limits_{k=1}^{m}D^{-l_{k}}\leq 1$
+With $D$ the size of the size of the alphabet, $m$ the number of words, and $l_{k}$ the length of the $k^{th}$ word.
+
+For the code to be uniquely decodable, it can't have a code that is the beginning of a following code. For a D-ary code, this means that if there are $D$ words of code length $l$, there can't be words of length superior to $l$.
+
+Thus, for the D-ary code to be uniquely decodable, we can at most have $D-1$ words of code length $l < l_{max}$, and $D$ words of code length $l_{max}$.
+
+This means that we have :
+\[\sum\limits_{k=1}^{m}D^{-l_{k}}=(D-1)\sum\limits_{i=1}^{l_{max-1}}D^{-i}+D*D^{-l_{max}}\]
+\[\sum\limits_{k=1}^{m}D^{-l_{k}}=(D-1)\sum\limits_{i=1}^{l_{max}}D^{-i}+D^{-l_{max}}\]
+\[\sum\limits_{k=1}^{m}D^{-l_{k}}=(D-1)\frac{D^{-l_{max}}(D^{l_{max}-1})}{D-1}+D^{-l_{max}}\]
+\[\sum\limits_{k=1}^{m}D^{-l_{k}}=1\]
+Since this is at the most, a code is uniquely decodable if
+\[\sum\limits_{k=1}^{m}D^{-l_{k}}\leq1\]
+QED
+
+\end{document}

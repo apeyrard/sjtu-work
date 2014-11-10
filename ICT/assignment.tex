@@ -1,0 +1,101 @@
+\documentclass[10pt]{article}
+\author{Alex Peyrard}
+\title{Information and coding theory assignment}
+
+\begin{document}
+\maketitle
+\section{Known equations}
+Define a probability mass function
+\[\mathcal{P}(X=x,Y=y,Z=z)\]
+Where \[x\in \mathcal{X} = \{0,1\}, y\in \mathcal{Y} = \{0,1\}, z\in \mathcal{Z} = \{0,1\}\]
+by
+\[\mathcal{P}(X=0,Y=0,Z=0)=\mathcal{P}(X=1,Y=0,Z=1)=1/4\]
+\[\mathcal{P}(X=0,Y=1,Z=1)=\mathcal{P}(X=1,Y=1,Z=0)=1/4\]
+\[\mathcal{P}(X=0,Y=1,Z=0)=\mathcal{P}(X=0,Y=0,Z=1)=0\]
+\[\mathcal{P}(X=1,Y=0,Z=0)=\mathcal{P}(X=1,Y=1,Z=1)=0\]
+
+then
+\[\mathcal{P}(X=0,Z=0)=\mathcal{P}(X=0,Y=0,Z=0)+\mathcal{P}(X=0,Y=1,Z=0)=1/4\]
+\[\mathcal{P}(X=0,Z=1)=\mathcal{P}(X=0,Y=0,Z=1)+\mathcal{P}(X=0,Y=1,Z=1)=1/4\]
+\[\mathcal{P}(X=1,Z=0)=\mathcal{P}(X=1,Y=0,Z=0)+\mathcal{P}(X=1,Y=1,Z=0)=1/4\]
+\[\mathcal{P}(X=1,Z=1)=\mathcal{P}(X=1,Y=0,Z=1)+\mathcal{P}(X=1,Y=1,Z=1)=1/4\]
+and
+\[\mathcal{P}(X=0,Y=0)=\mathcal{P}(X=0,Y=0,Z=0)+\mathcal{P}(X=0,Y=0,Z=1)=1/4\]
+\[\mathcal{P}(X=0,Y=1)=\mathcal{P}(X=0,Y=1,Z=0)+\mathcal{P}(X=0,Y=1,Z=1)=1/4\]
+\[\mathcal{P}(X=1,Y=0)=\mathcal{P}(X=1,Y=0,Z=0)+\mathcal{P}(X=1,Y=0,Z=1)=1/4\]
+\[\mathcal{P}(X=1,Y=1)=\mathcal{P}(X=1,Y=1,Z=0)+\mathcal{P}(X=1,Y=1,Z=1)=1/4\]
+and
+\[\mathcal{P}(Y=0,Z=0)=\mathcal{P}(X=0,Y=0,Z=0)+\mathcal{P}(X=1,Y=0,Z=0)=1/4\]
+\[\mathcal{P}(Y=0,Z=1)=\mathcal{P}(X=0,Y=0,Z=1)+\mathcal{P}(X=1,Y=0,Z=1)=1/4\]
+\[\mathcal{P}(Y=1,Z=0)=\mathcal{P}(X=0,Y=1,Z=0)+\mathcal{P}(X=1,Y=1,Z=0)=1/4\]
+\[\mathcal{P}(Y=1,Z=1)=\mathcal{P}(X=0,Y=1,Z=1)+\mathcal{P}(X=1,Y=1,Z=1)=1/4\]
+
+we can also find
+\[\mathcal{P}(X=0)=\mathcal{P}(X=0,Z=0)+\mathcal{P}(X=0,Z=1)=1/2\]
+\[\mathcal{P}(X=1)=\mathcal{P}(X=1,Y=0)+\mathcal{P}(X=1,Y=1)=1/2\]
+\[\mathcal{P}(Y=0)=\mathcal{P}(Y=0,Z=0)+\mathcal{P}(Y=0,Z=1)=1/2\]
+\[\mathcal{P}(Y=1)=\mathcal{P}(Y=1,Z=0)+\mathcal{P}(Y=1,Z=1)=1/2\]
+\[\mathcal{P}(Z=0)=\mathcal{P}(X=0,Z=0)+\mathcal{P}(X=1,Z=0)=1/2\]
+\[\mathcal{P}(Z=1)=\mathcal{P}(X=0,Z=1)+\mathcal{P}(X=1,Z=1)=1/2\]
+
+\section{Mutual independence}
+Thanks to the previous equations, we can find that
+\[\mathcal{P}(X=0,Y=0,Z=0)=1/4\]
+\[\mathcal{P}(X=0)\mathcal{P}(Y=0)\mathcal{P}(Z=0)=(1/2)^3=1/8\]
+Thus
+\[\mathcal{P}(X=0,Y=0,Z=0)\neq\mathcal{P}(X=0)\mathcal{P}(Y=0)\mathcal{P}(Z=0)\]
+X,Y and Z are not mutually independent
+\section{Pairwise independence}
+Thanks to the previous equations we can find that
+\[\mathcal{P}(X=0,Y=0)=\mathcal{P}(X=0)\mathcal{P}(Y=0)=1/4\]
+\[\mathcal{P}(X=0,Y=1)=\mathcal{P}(X=0)\mathcal{P}(Y=1)=1/4\]
+\[\mathcal{P}(X=1,Y=0)=\mathcal{P}(X=1)\mathcal{P}(Y=0)=1/4\]
+\[\mathcal{P}(X=1,Y=1)=\mathcal{P}(X=1)\mathcal{P}(Y=1)=1/4\]
+
+\[\mathcal{P}(X=0,Z=0)=\mathcal{P}(X=0)\mathcal{P}(Z=0)=1/4\]
+\[\mathcal{P}(X=0,Z=1)=\mathcal{P}(X=0)\mathcal{P}(Z=1)=1/4\]
+\[\mathcal{P}(X=1,Z=0)=\mathcal{P}(X=1)\mathcal{P}(Z=0)=1/4\]
+\[\mathcal{P}(X=1,Z=1)=\mathcal{P}(X=1)\mathcal{P}(Z=1)=1/4\]
+
+\[\mathcal{P}(Y=0,Z=0)=\mathcal{P}(Y=0)\mathcal{P}(Z=0)=1/4\]
+\[\mathcal{P}(Y=0,Z=1)=\mathcal{P}(Y=0)\mathcal{P}(Z=1)=1/4\]
+\[\mathcal{P}(Y=1,Z=0)=\mathcal{P}(Y=1)\mathcal{P}(Z=0)=1/4\]
+\[\mathcal{P}(Y=1,Z=1)=\mathcal{P}(Y=1)\mathcal{P}(Z=1)=1/4\]
+
+Thus
+
+X,Y and Z are pairwise independent.
+\section{Conditional independence}
+For any random variables X1,X2 and X3
+X1 is independent of X2 conditioning on X3 if and only if
+\[\mathcal{P}(x1,x2,x3)\mathcal{P}(x2)=\mathcal{P}(x1,x2)\mathcal{P}(x2,x3)\]
+In our case, for any correspondence between X1, X2, X3 and X,Y, Z $\mathcal{P}(x1,x2)\mathcal{P}(x2,x3)$ will always be equal to 1/8
+On the other hand, $\mathcal{P}(x1,x2,x3)\mathcal{P}(x2)$ will be equal to 0 for some value of x,y and z, for example when X=Y=Z=1.
+Thus, for any possible permutation of X,Y,and Z as X1, X2, and X3, none of them is conditionally independent.
+
+\section{Equivalent definitions of Conditional independence}
+Let's prove that the jumping form and shortened form are equivalent to the symetric form.
+
+\subsection{Jumping form}
+for $\mathcal{P}(x)>0, \mathcal{P}(y)>0$
+\[\mathcal{P}(x,y,z)=\mathcal{P}(x)\mathcal{P}(y|x)\mathcal{P}(z|y)\]
+\[\Leftrightarrow\]
+$\mathcal{P}(x,y,z)=\mathcal{P}(x)\frac{\mathcal{P}(x,y)}{\mathcal{P}(x)}\frac{\mathcal{P}(y,z)}{\mathcal{P}(y)}$ using the formulae $\mathcal{P}(z|x,y) = \frac{\mathcal{P}(x,y,z)}{\mathcal{P}(x,y)}$
+\[\Leftrightarrow\]
+\[\mathcal{P}(x,y,z)\mathcal{P}(y)=\mathcal{P}(x,y)\mathcal{P}(y,z)
+\]
+QED
+\\
+
+\subsection{Shortened form}
+for $\mathcal{P}(x,y)>0$
+\[\mathcal{P}(z|x,y)=\mathcal{P}(z|y)\]
+\[\Leftrightarrow\]
+$\frac{\mathcal{P}(x,y,z)}{\mathcal{P}(x,y)}=\frac{\mathcal{P}(y,z)}{\mathcal{P}(y)}$ using the formulae $\mathcal{P}(z|x,y) = \frac{\mathcal{P}(x,y,z)}{\mathcal{P}(x,y)}$
+\[\Leftrightarrow\]
+\[\mathcal{P}(x,y,z)\mathcal{P}(y)=\mathcal{P}(x,y)\mathcal{P}(y,z)
+\]
+
+QED
+
+\end{document}
