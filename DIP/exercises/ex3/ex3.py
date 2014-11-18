@@ -10,7 +10,7 @@ import math
 def getMatrix(image):
     data = list(image.getdata())
     width, height = image.size
-    matrix = np.array(data).reshape(width,height)
+    matrix = np.array(data).reshape(height,width)
     return matrix
 
 def getData(matrix):
@@ -111,10 +111,10 @@ imButterHigh.putdata(getData(postButterHigh))
 imGaussLow.putdata(getData(postGaussLow))
 imGaussHigh.putdata(getData(postGaussHigh))
 
-#imIdealLow.show()
-#imIdealHigh.show()
-#imButterLow.show()
-#imButterHigh.show()
+imIdealLow.show()
+imIdealHigh.show()
+imButterLow.show()
+imButterHigh.show()
 imGaussLow.show()
 imGaussHigh.show()
 
