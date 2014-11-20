@@ -5,6 +5,7 @@ import sys
 
 from PIL import Image
 import numpy as np
+import cmath
 
 def getMatrix(image):
     data = list(image.getdata())
@@ -27,7 +28,15 @@ def postprocessing(matrix):
     return preprocessing(matrix)
 
 def blur(matrix, a, b, T):
-    print(matrix)
+    newMat = matrix.copy()
+    blurMat = matrix.copy()
+    for y in range(newMat.shape[1]):
+        for x in range(newMat.shape[0]):
+            u = x+1
+            v = y+1
+            blurMat[x][y] = (T/(cmath.pi*(u*a+v*b)))*cmath.sin(cmath.pi*(u*a+v*b))*cmath.exp(-1j*cmath.pi*(u*a+v*b))
+    #return np.dot(blurMat,newMat)
+    return blurMat*newMat
 
 try:
     im = Image.open("./book_cover.jpg")
@@ -35,21 +44,22 @@ except FileNotFoundError as e:
     sys.exit("Error : file not found")
 
 matrix = getMatrix(im)
-prepMat = preprocessing(matrix)
+prepMat = matrix#preprocessing(matrix)
 fourierMat = np.fft.fft2(prepMat)
 
-blurredMat = blur(fourierMat, a=0.1, b=0.1, T=1)
+blurredFMat = blur(fourierMat, a=0.1, b=0.1, T=1)
+
+blurredMat = np.fft.ifft2(blurredFMat)
 
 
-#blurred = Image.new(im.mode, im.size)
+blurred = Image.new(im.mode, im.size)
 
 
-#gaussHigh = np.fft.ifft2(gaussHighF)
 
-#postGaussHigh = postprocessing(gaussHigh)
+blurredPost = blurredMat#postprocessing(blurredMat)
 
-#imGaussHigh.putdata(getData(postGaussHigh))
+blurred.putdata(getData(blurredPost))
 
-#imGaussHigh.show()
+blurred.show()
 
 
