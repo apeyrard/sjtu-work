@@ -7,6 +7,7 @@ from PIL import Image
 import numpy as np
 import cmath
 
+
 def getMatrix(image):
     data = list(image.getdata())
     width, height = image.size

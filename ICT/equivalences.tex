@@ -1,0 +1,19 @@
+\documentclass[10pt]{article}
+\author{Alex Peyrard}
+\title{equivalences}
+
+\begin{document}
+\maketitle
+
+\section{Equivalences}
+\[(1) \Leftrightarrow \forall\varepsilon>0, \lim_{n \to \infty} Pr(|X_{n}-Y|<\varepsilon)=1\]
+\[(4) \Leftrightarrow \forall\varepsilon>0, \lim_{n \to \infty} Pr(|X_{n}-Y|\leq\varepsilon)=1\]
+\section{Proof that $(1) \Rightarrow (4)$}
+\[\lim_{n \to \infty} Pr(|X_{n}-Y|<\varepsilon) \leq \lim_{n \to \infty} Pr(|X_{n}-Y|\leq\varepsilon)\]
+\[\lim_{n \to \infty} Pr(|X_{n}-Y|<\varepsilon) = 1\]
+We thus have
+\[1 <= \lim_{n \to \infty} Pr(|X_{n}-Y|\leq\varepsilon) <= 1\]
+So \[ \lim_{n \to \infty} Pr(|X_{n}-Y|\leq\varepsilon) = 1 \]
+QED
+\section{Proof that $(4) \Rightarrow (1)$}
+\end{document}
