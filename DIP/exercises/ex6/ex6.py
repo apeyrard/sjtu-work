@@ -136,7 +136,7 @@ matrix = getMatrix(im)
 
 #method = 'nearest'
 method = 'bilinear'
-transform = translate(matrix, (52.3, 300), method)
+transform = rotate(matrix, math.pi/9, method)
 
 newMat = Image.new(im.mode, im.size)
 

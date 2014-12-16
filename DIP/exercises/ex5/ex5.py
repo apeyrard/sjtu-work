@@ -7,7 +7,6 @@ from PIL import Image
 import numpy as np
 import cmath
 
-
 def getMatrix(image):
     data = list(image.getdata())
     width, height = image.size
@@ -28,16 +27,33 @@ def preprocessing(matrix):
 def postprocessing(matrix):
     return preprocessing(matrix)
 
-def blur(matrix, a, b, T):
+def rescale(matrix):
     newMat = matrix.copy()
+    tmpMin = matrix.min()
+    for y in range(matrix.shape[1]):
+        for x in range(matrix.shape[0]):
+            newMat[x][y] = matrix[x][y]-tmpMin
+
+    tmpMax = newMat.max()
+
+    for y in range(matrix.shape[1]):
+        for x in range(matrix.shape[0]):
+            newMat[x][y] = newMat[x][y]*255/tmpMax
+    return newMat
+
+def blur(matrix, a, b, T):
     blurMat = matrix.copy()
-    for y in range(newMat.shape[1]):
-        for x in range(newMat.shape[0]):
-            u = x+1
-            v = y+1
-            blurMat[x][y] = (T/(cmath.pi*(u*a+v*b)))*cmath.sin(cmath.pi*(u*a+v*b))*cmath.exp(-1j*cmath.pi*(u*a+v*b))
-    #return np.dot(blurMat,newMat)
-    return blurMat*newMat
+    hor = int(blurMat.shape[1]/2)
+    vert = int(blurMat.shape[0]/2)
+    for y in range(-hor, hor):
+        for x in range(-vert, vert):
+            u = x
+            v = y
+            try:
+                blurMat[x][y] = (T/(cmath.pi*(u*a+v*b)))*cmath.sin(cmath.pi*(u*a+v*b))*cmath.exp(-1j*cmath.pi*(u*a+v*b))
+            except ZeroDivisionError:
+                blurMat[x][y] = 1
+    return blurMat
 
 try:
     im = Image.open("./book_cover.jpg")
@@ -45,22 +61,26 @@ except FileNotFoundError as e:
     sys.exit("Error : file not found")
 
 matrix = getMatrix(im)
-prepMat = matrix#preprocessing(matrix)
+prepMat = preprocessing(matrix)
 fourierMat = np.fft.fft2(prepMat)
 
-blurredFMat = blur(fourierMat, a=0.1, b=0.1, T=1)
+blurredFMat = fourierMat * blur(fourierMat, a=0.1, b=0.1, T=1)
 
 blurredMat = np.fft.ifft2(blurredFMat)
 
-
 blurred = Image.new(im.mode, im.size)
 
+blurredPost = postprocessing(blurredMat)
 
+real = getMatrix(im)
+for y in range(real.shape[1]):
+    for x in range(real.shape[0]):
+        real[x][y] = blurredPost[x][y].real
 
-blurredPost = blurredMat#postprocessing(blurredMat)
+rescaled = rescale(real)
 
-blurred.putdata(getData(blurredPost))
+blurred.putdata(getData(rescaled))
 
-blurred.show()
+blurred.save('./blurredBook.jpg')
 
 
