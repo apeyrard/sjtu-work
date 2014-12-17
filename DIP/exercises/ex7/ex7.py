@@ -106,6 +106,7 @@ try:
             newIm.show()
             if args.showdiff:
                 diff = matrix-test
+                diff = rescale(diff)
                 newIm = Image.new(im.mode, im.size)
                 newIm.putdata(getData(diff))
                 newIm.show()
