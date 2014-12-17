@@ -38,6 +38,35 @@ def blur(matrix, a, b, T):
     result = T * np.sinc(x) * np.exp(-1j*np.pi*x)
     return result
 
+def inverse_filter(filter, threshold):
+    return np.vectorize(lambda x: 1./x if np.abs(x) >= threshold else 1.0, otypes=[np.complex])(filter)
+
+def weiner(matrix, H, N):
+    Sxx = np.abs(matrix) ** 2
+
+    if N is not None:
+        Snn = N ** 2
+    else:
+        Snn = None
+
+    if Snn is not None:
+        m, n = H.shape
+
+        d=0.003
+
+        result = np.empty((m,n), dtype=complex)
+
+        conjHT = np.conj(H).T
+        denoms = (np.abs(H)**2+Snn/Sxx)
+
+        for u in range(m):
+            for v in range(n):
+                denom = denoms[u, v]
+                result[u, v] = conjHT[u, v] / denom if np.abs(denom)>=d else 1.0
+        return result
+    else:
+        return inverse_filter(H)
+
 def filter(matrix, function):
     result = function(matrix)
     return result
@@ -74,14 +103,9 @@ try:
             prepMat = preprocessing(matrix)
             fourierMat = np.fft.fft2(prepMat)
 
-            deblurMat = blur(fourierMat, a=0.1, b=0.1, T=1)
+            deblurMat = inverse_filter(blur(fourierMat, a=0.1, b=0.1, T=1), threshold = 1.e-2)
 
-            x,y = deblurMat.shape
-            for j in range(x):
-                for k in range(y):
-                    if abs(deblurMat[j][k]) < 1e-2:
-                        deblurMat[j][k] = 1
-            blurredFMat = fourierMat / deblurMat
+            blurredFMat = fourierMat * deblurMat
 
             blurredMat = np.fft.ifft2(blurredFMat)
 
