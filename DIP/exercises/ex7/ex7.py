@@ -6,6 +6,7 @@ import sys
 from PIL import Image
 import numpy as np
 import scipy.fftpack as sp
+import argparse
 
 def getMatrix(image):
     data = list(image.getdata())
@@ -16,6 +17,11 @@ def getMatrix(image):
 def getData(matrix):
     data = list(matrix.reshape(matrix.shape[0]*matrix.shape[1]))
     return data
+
+def rescale(matrix):
+    matrix = matrix - matrix.min()
+    matrix = matrix * 255 / matrix.max()
+    return matrix
 
 def slice(matrix):
     #slice matrix in 8*8 submatrices
@@ -46,38 +52,64 @@ def applyMask(matrix, mask):
                 newMat[j][k] = newMat[j][k] * mask
     return newMat
 
-try:
-    with Image.open('./lenna.tif') as im:
-        matrix = getMatrix(im)
-        height, width = matrix.shape
-        sliced = slice(matrix)
-        for x in range(int(height/8)):
-            for y in range(int(width/8)):
-                for j in range(8):
-                    sliced[x][y][j,:] = sp.dct(sliced[x][y][j,:],norm='ortho')
-                for j in range(8):
-                    sliced[x][y][:,j] = sp.dct(sliced[x][y][:,j],norm='ortho')
-        mask=np.array([[1, 1, 1, 1, 1, 0, 0, 0],
-        [1, 1, 1, 1, 0, 0, 0, 0],
-        [1, 1, 1, 0, 0, 0, 0, 0],
-        [1, 1, 0, 0, 0, 0, 0, 0],
-        [1, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]])
+parser = argparse.ArgumentParser(description='Compression based on DCT or wavelets')
 
-        sliced = applyMask(sliced,mask)
-        for x in range(int(height/8)):
-            for y in range(int(width/8)):
-                for j in range(8):
-                    sliced[x][y][:,j] = sp.idct(sliced[x][y][:,j],norm='ortho')
-                for j in range(8):
-                    sliced[x][y][j,:] = sp.idct(sliced[x][y][j,:],norm='ortho')
-        #print(sliced)
-        test =  deslice(sliced)
-        newIm = Image.new(im.mode, im.size)
-        newIm.putdata(getData(test))
-        newIm.show()
+parser.add_argument('image')
+parser.add_argument('--showdiff', action='store_true')
+parser.add_argument('--dct', action='store_true')
+parser.add_argument('--threshold', action='store_true')
+
+args = parser.parse_args()
+
+try:
+    with Image.open(args.image) as im:
+        matrix = getMatrix(im)
+
+        if args.dct:
+            height, width = matrix.shape
+            sliced = slice(matrix)
+            for x in range(int(height/8)):
+                for y in range(int(width/8)):
+                    for j in range(8):
+                        sliced[x][y][j,:] = sp.dct(sliced[x][y][j,:],norm='ortho')
+                    for j in range(8):
+                        sliced[x][y][:,j] = sp.dct(sliced[x][y][:,j],norm='ortho')
+            if not args.threshold:
+                mask=np.array([[1, 1, 1, 1, 1, 0, 0, 0],
+                [1, 1, 1, 1, 0, 0, 0, 0],
+                [1, 1, 1, 0, 0, 0, 0, 0],
+                [1, 1, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0]])
+            else:
+                mask=np.array([[1, 1, 0, 1, 1, 0, 0, 0],
+                [1, 1, 1, 1, 0, 0, 0, 0],
+                [1, 1, 1, 0, 0, 0, 0, 0],
+                [1, 1, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 1, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0]])
+
+            sliced = applyMask(sliced,mask)
+            for x in range(int(height/8)):
+                for y in range(int(width/8)):
+                    for j in range(8):
+                        sliced[x][y][:,j] = sp.idct(sliced[x][y][:,j],norm='ortho')
+                    for j in range(8):
+                        sliced[x][y][j,:] = sp.idct(sliced[x][y][j,:],norm='ortho')
+            test =  deslice(sliced)
+            newIm = Image.new(im.mode, im.size)
+            newIm.putdata(getData(test))
+            newIm.show()
+            if args.showdiff:
+                diff = matrix-test
+                newIm = Image.new(im.mode, im.size)
+                newIm.putdata(getData(diff))
+                newIm.show()
+
 
 
 
