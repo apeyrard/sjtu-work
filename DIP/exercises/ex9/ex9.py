@@ -6,11 +6,14 @@ import sys
 from PIL import Image
 import numpy as np
 import argparse
+import scipy.signal as ss
+import scipy.ndimage.filters as filters
+import math
 
 def getMatrix(image):
     data = list(image.getdata())
     width, height = image.size
-    matrix = np.array(data).reshape(height,width)
+    matrix = np.array(data, dtype=float).reshape(height,width)
     return matrix
 
 def getData(matrix):
@@ -115,7 +118,64 @@ def detection(matrix, method):
 
                 except IndexError:
                     deltaMat[x][y] = 0
-    return deltaMat
+    elif method == 'mh':
+        sigma = 4
+        deltaMat = filters.gaussian_filter(matrix, sigma)
+        #print(deltaMat.min(), deltaMat.max())
+        #print(deltaMat)
+        #return deltaMat
+        laplacian = np.array([[1, 1, 1],
+                            [1, -8, 1],
+                            [1, 1, 1]])
+        deltaMat = ss.convolve(deltaMat, laplacian, mode='same')
+        for x in range(deltaMat.shape[0]):
+            for y in range(deltaMat.shape[1]):
+                if x ==0 or y==0 or x == deltaMat.shape[0]-1 or y == deltaMat.shape[1]-1:
+                    deltaMat[x][y] = 0
+        threshold = 4*deltaMat.max()/100
+
+        #searching zero-crossings
+        zeroCross = np.zeros(deltaMat.shape)
+        for x in range(deltaMat.shape[0]):
+            for y in range(deltaMat.shape[1]):
+                try:
+                    if x-1<0:
+                        raise IndexError('Negative Value')
+                    a = math.copysign(1, deltaMat[x-1][y])
+                    b = math.copysign(1, deltaMat[x+1][y])
+                    if a != b and abs(deltaMat[x-1][y] - deltaMat[x+1][y]) > threshold:
+                        zeroCross[x][y] = 1
+                except IndexError:
+                    pass
+                try:
+                    if x-1<0:
+                        raise IndexError('Negative Value')
+                    a = math.copysign(1, deltaMat[x][y-1])
+                    b = math.copysign(1, deltaMat[x][y+1])
+                    if a != b and abs(deltaMat[x][y-1] - deltaMat[x][y+1]) > threshold:
+                        zeroCross[x][y] = 1
+                except IndexError:
+                    pass
+                try:
+                    if x-1<0:
+                        raise IndexError('Negative Value')
+                    a = math.copysign(1, deltaMat[x-1][y-1])
+                    b = math.copysign(1, deltaMat[x+1][y+1])
+                    if a != b and abs(deltaMat[x-1][y-1] - deltaMat[x+1][y+1]) > threshold:
+                        zeroCross[x][y] = 1
+                except IndexError:
+                    pass
+                try:
+                    if x-1<0:
+                        raise IndexError('Negative Value')
+                    a = math.copysign(1, deltaMat[x-1][y+1])
+                    b = math.copysign(1, deltaMat[x+1][y-1])
+                    if a != b and abs(deltaMat[x-1][y+1] - deltaMat[x+1][y-1]) > threshold:
+                        zeroCross[x][y] = 1
+                except IndexError:
+                    pass
+
+    return rescale(zeroCross)
 
 
 
@@ -128,6 +188,7 @@ parser.add_argument('--prewitt', action='store_true')
 parser.add_argument('--sobel', action='store_true')
 parser.add_argument('--prewitt_diagonal', action='store_true')
 parser.add_argument('--sobel_diagonal', action='store_true')
+parser.add_argument('--mh', action='store_true')
 
 args = parser.parse_args()
 
@@ -145,6 +206,8 @@ try:
             method = 'prewitt_diagonal'
         elif args.sobel_diagonal:
             method = 'sobel_diagonal'
+        elif args.mh:
+            method = 'mh'
 
         newMat = detection(matrix, method)
 
