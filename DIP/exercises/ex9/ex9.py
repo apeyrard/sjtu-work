@@ -131,7 +131,7 @@ def sobel_diagonal(matrix):
     return gx, gy
 
 def getHist(matrix):
-    hist = np.zeros(255)
+    hist = np.zeros(256)
     for x in range(matrix.shape[0]):
         for y in range(matrix.shape[0]):
             hist[matrix[x][y]] += 1
@@ -146,10 +146,10 @@ def normHist(hist):
 def otsu(matrix):
     hist = getHist(matrix)
     hist = normHist(hist)
-    cumSum = np.zeros(255)
-    cumMean = np.zeros(255)
-    sigma = np.zeros(255)
-    for k in range(255):
+    cumSum = np.zeros(256)
+    cumMean = np.zeros(256)
+    sigma = np.zeros(256)
+    for k in range(256):
         if k == 0:
             cumSum[k] = hist[k]
             cumMean[k] = 0
@@ -157,7 +157,7 @@ def otsu(matrix):
             cumSum[k] = cumSum[k-1] + hist[k]
             cumMean[k] = cumMean[k-1] +k*hist[k]
 
-    for k in range(255):
+    for k in range(256):
         if cumSum[k] == 0 or cumSum[k] == 1:
             sigma[k] = 0
         else:
@@ -166,14 +166,14 @@ def otsu(matrix):
     sigmaMax = sigma.max()
     nb = 0
     kstar = 0
-    for k in range(255):
+    for k in range(256):
         if sigma[k] == sigmaMax:
             nb += 1
             kstar += k
     kstar = kstar/nb
     sigmaG = 0
-    for k in range(255):
-        sigmaG += ((k-cumMean[254])**2)*hist[k]
+    for k in range(256):
+        sigmaG += ((k-cumMean[255])**2)*hist[k]
     eta = sigma[kstar]/sigmaG
 
     for x in range(matrix.shape[0]):
