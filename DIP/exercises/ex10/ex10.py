@@ -381,9 +381,6 @@ try:
             newMat, sequence = resampling(matrix, sequence)
             print(diff(chain(sequence)))
 
-
-
-
 except FileNotFoundError as e:
     sys.exit("Error : file not found")
 
