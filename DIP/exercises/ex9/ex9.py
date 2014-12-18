@@ -25,105 +25,127 @@ def rescale(matrix):
     matrix = matrix * 255 / matrix.max()
     return matrix
 
-def detection(matrix, method):
-    deltaMat = np.zeros(matrix.shape)
-    if method == 'roberts':
-        for x in range(matrix.shape[0]):
-            for y in range(matrix.shape[1]):
-                try:
-                    deltaMat[x][y] = abs(matrix[x+1][y+1] - matrix[x][y]) + abs(matrix[x+1][y] - matrix[x][y+1])
-                except IndexError:
-                    deltaMat[x][y] = 0
-    elif method == 'prewitt':
-        for x in range(matrix.shape[0]):
-            for y in range(matrix.shape[1]):
-                try:
-                    if(x-1 < 0 or y-1 < 0):
-                        raise IndexError('Negative value')
-                    deltaMat[x][y] = (abs(matrix[x+1][y-1]
+def roberts(matrix):
+    gx = np.zeros(matrix.shape)
+    gy = np.zeros(matrix.shape)
+    for x in range(matrix.shape[0]):
+        for y in range(matrix.shape[1]):
+            try:
+                gx[x][y] = matrix[x+1][y+1] - matrix[x][y]
+                gy[x][y] = matrix[x+1][y] - matrix[x][y+1]
+            except IndexError:
+                gx[x][y] = 0
+                gy[x][y] = 0
+    return gx, gy
+
+def prewitt(matrix):
+    gx = np.zeros(matrix.shape)
+    gy = np.zeros(matrix.shape)
+    for x in range(matrix.shape[0]):
+        for y in range(matrix.shape[1]):
+            try:
+                gx[x][y] = (matrix[x+1][y-1]
                                         + matrix[x+1][y]
                                         + matrix[x+1][y+1]
                                         - matrix[x-1][y-1]
                                         - matrix[x-1][y]
                                         - matrix[x-1][y+1])
-                                        + abs(matrix[x-1][y+1]
+                gy[x][y] = (matrix[x-1][y+1]
                                         + matrix[x][y+1]
                                         + matrix[x+1][y+1]
                                         - matrix[x-1][y-1]
                                         - matrix[x][y-1]
-                                        - matrix[x+1][y-1]))
+                                        - matrix[x+1][y-1])
+            except IndexError:
+                gx[x][y] = 0
+                gy[x][y] = 0
+    return gx, gy
 
-                except IndexError:
-                    deltaMat[x][y] = 0
-    elif method == 'sobel':
-        for x in range(matrix.shape[0]):
-            for y in range(matrix.shape[1]):
-                try:
-                    if(x-1 < 0 or y-1 < 0):
-                        raise IndexError('Negative value')
-                    deltaMat[x][y] = (abs(matrix[x+1][y-1]
+def sobel(matrix):
+    gx = np.zeros(matrix.shape)
+    gy = np.zeros(matrix.shape)
+    for x in range(matrix.shape[0]):
+        for y in range(matrix.shape[1]):
+            try:
+                gx[x][y] = (matrix[x+1][y-1]
                                         + 2*matrix[x+1][y]
                                         + matrix[x+1][y+1]
                                         - matrix[x-1][y-1]
                                         - 2*matrix[x-1][y]
                                         - matrix[x-1][y+1])
-                                        + abs(matrix[x-1][y+1]
+                gy[x][y] = (matrix[x-1][y+1]
                                         + 2*matrix[x][y+1]
                                         + matrix[x+1][y+1]
                                         - matrix[x-1][y-1]
                                         - 2*matrix[x][y-1]
-                                        - matrix[x+1][y-1]))
+                                        - matrix[x+1][y-1])
+            except IndexError:
+                gx[x][y] = 0
+                gy[x][y] = 0
+    return gx, gy
 
-                except IndexError:
-                    deltaMat[x][y] = 0
-    elif method == 'prewitt_diagonal':
-        for x in range(matrix.shape[0]):
-            for y in range(matrix.shape[1]):
-                try:
-                    if(x-1 < 0 or y-1 < 0):
-                        raise IndexError('Negative value')
-                    deltaMat[x][y] = (abs(matrix[x-1][y]
+def prewitt_diagonal(matrix):
+    gx = np.zeros(matrix.shape)
+    gy = np.zeros(matrix.shape)
+    for x in range(matrix.shape[0]):
+        for y in range(matrix.shape[1]):
+            try:
+                gx[x][y] = (matrix[x-1][y]
                                         + matrix[x-1][y+1]
                                         + matrix[x][y+1]
                                         - matrix[x][y-1]
                                         - matrix[x+1][y-1]
                                         - matrix[x+1][y])
-                                        + abs(matrix[x][y+1]
+                gy[x][y] = (matrix[x][y+1]
                                         + matrix[x+1][y+1]
                                         + matrix[x+1][y]
                                         - matrix[x][y-1]
                                         - matrix[x-1][y-1]
-                                        - matrix[x-1][y]))
+                                        - matrix[x-1][y])
+            except IndexError:
+                gx[x][y] = 0
+                gy[x][y] = 0
+    return gx, gy
 
-                except IndexError:
-                    deltaMat[x][y] = 0
-    elif method == 'sobel_diagonal':
-        for x in range(matrix.shape[0]):
-            for y in range(matrix.shape[1]):
-                try:
-                    if(x-1 < 0 or y-1 < 0):
-                        raise IndexError('Negative value')
-                    deltaMat[x][y] = (abs(matrix[x-1][y]
+def sobel_diagonal(matrix):
+    gx = np.zeros(matrix.shape)
+    gy = np.zeros(matrix.shape)
+    for x in range(matrix.shape[0]):
+        for y in range(matrix.shape[1]):
+            try:
+                gx[x][y] = (matrix[x-1][y]
                                         + 2*matrix[x-1][y+1]
                                         + matrix[x][y+1]
                                         - matrix[x][y-1]
                                         - 2*matrix[x+1][y-1]
                                         - matrix[x+1][y])
-                                        + abs(matrix[x][y+1]
+                gy[x][y] = (matrix[x][y+1]
                                         + 2*matrix[x+1][y+1]
                                         + matrix[x+1][y]
                                         - matrix[x][y-1]
                                         - 2*matrix[x-1][y-1]
-                                        - matrix[x-1][y]))
+                                        - matrix[x-1][y])
+            except IndexError:
+                gx[x][y] = 0
+                gy[x][y] = 0
+    return gx, gy
 
-                except IndexError:
-                    deltaMat[x][y] = 0
+
+def detection(matrix, method):
+    deltaMat = np.zeros(matrix.shape)
+    if method == 'roberts':
+        gx, gy = roberts(matrix)
+    elif method == 'prewitt':
+        gx, gy = prewitt(matrix)
+    elif method == 'sobel':
+        gx, gy = sobel(matrix)
+    elif method == 'prewitt_diagonal':
+        gx, gy = prewitt_diagonal(matrix)
+    elif method == 'sobel_diagonal':
+        gx, gy = sobel_diagonal(matrix)
     elif method == 'mh':
         sigma = 4
         deltaMat = filters.gaussian_filter(matrix, sigma)
-        #print(deltaMat.min(), deltaMat.max())
-        #print(deltaMat)
-        #return deltaMat
         laplacian = np.array([[1, 1, 1],
                             [1, -8, 1],
                             [1, 1, 1]])
@@ -174,8 +196,59 @@ def detection(matrix, method):
                         zeroCross[x][y] = 1
                 except IndexError:
                     pass
-
-    return rescale(zeroCross)
+        return rescale(zeroCross)
+    elif method == 'canny':
+        sigma = 4
+        deltaMat = rescale(filters.gaussian_filter(matrix, sigma))
+        gx, gy = prewitt(deltaMat)
+        G = ((gx)**2+(gy)**2)**0.5
+        angle = np.zeros(gx.shape, dtype=float)
+        g = G.copy()
+        for x in range(gx.shape[0]):
+            for y in range(gx.shape[1]):
+                angle[x][y] = math.degrees(math.atan2(gy[x][y],gx[x][y]))
+                if -157.5 <= angle[x][y] < -112.5 or 22.5 <= angle[x][y] < -67.5:
+                    angle[x][y] = 45
+                    if G[x][y] <= G[x+1][y+1] or G[x][y] <= G[x-1][y-1]:
+                        g[x][y] = 0
+                elif -112.5 <= angle[x][y] < -67.5 or 67.5 <= angle[x][y] < 112.5:
+                    angle[x][y] = 90
+                    if G[x][y] <= G[x][y-1] or G[x][y] <= G[x][y+1]:
+                        g[x][y] = 0
+                elif -67.5 <= angle[x][y] < -22.5 or 112.5 <= angle[x][y] < 157.5:
+                    angle[x][y] = 135
+                    if G[x][y] <= G[x+1][y-1] or G[x][y] <= G[x-1][y+1]:
+                        g[x][y] = 0
+                else:
+                    angle[x][y] = 0
+                    if G[x][y] <= G[x-1][y] or G[x][y] <= G[x+1][y]:
+                        g[x][y] = 0
+        tl = 7
+        th= 2*tl
+        gh = np.zeros(gx.shape, dtype=float)
+        gl = np.zeros(gx.shape, dtype=float)
+        for x in range(gl.shape[0]):
+            for y in range(gl.shape[1]):
+                if g[x][y] > tl:
+                    gl[x][y] = g[x][y]
+                if g[x][y] > th:
+                    gh[x][y] = g[x][y]
+        gl = gl - gh
+        valid = np.zeros(gx.shape, dtype=float)
+        for x in range(gh.shape[0]):
+            for y in range(gh.shape[1]):
+                if gh[x][y] > 0:
+                    for j in range(-1,2):
+                        for k in range(-1,2):
+                            try:
+                                if x+j<0 or y+k<0:
+                                    raise IndexError('Negative value')
+                                if gl[x+j][y+j] > 0:
+                                    valid[x+j][y+k] = gl[x+j][y+j]
+                            except IndexError:
+                                pass
+        return valid + gh
+    return abs(gx) + abs(gy)
 
 
 
@@ -189,6 +262,7 @@ parser.add_argument('--sobel', action='store_true')
 parser.add_argument('--prewitt_diagonal', action='store_true')
 parser.add_argument('--sobel_diagonal', action='store_true')
 parser.add_argument('--mh', action='store_true')
+parser.add_argument('--canny', action='store_true')
 
 args = parser.parse_args()
 
@@ -208,6 +282,8 @@ try:
             method = 'sobel_diagonal'
         elif args.mh:
             method = 'mh'
+        elif args.canny:
+            method = 'canny'
 
         newMat = detection(matrix, method)
 
