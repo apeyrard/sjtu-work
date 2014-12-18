@@ -130,6 +130,61 @@ def sobel_diagonal(matrix):
                 gy[x][y] = 0
     return gx, gy
 
+def getHist(matrix):
+    hist = np.zeros(255)
+    for x in range(matrix.shape[0]):
+        for y in range(matrix.shape[0]):
+            hist[matrix[x][y]] += 1
+    return hist
+
+def normHist(hist):
+    total = sum(hist)
+    for x in range(len(hist)):
+        hist[x] = hist[x]/total
+    return hist
+
+def otsu(matrix):
+    hist = getHist(matrix)
+    hist = normHist(hist)
+    cumSum = np.zeros(255)
+    cumMean = np.zeros(255)
+    sigma = np.zeros(255)
+    for k in range(255):
+        if k == 0:
+            cumSum[k] = hist[k]
+            cumMean[k] = 0
+        else:
+            cumSum[k] = cumSum[k-1] + hist[k]
+            cumMean[k] = cumMean[k-1] +k*hist[k]
+
+    for k in range(255):
+        if cumSum[k] == 0 or cumSum[k] == 1:
+            sigma[k] = 0
+        else:
+            sigma[k] = (cumMean[len(hist)-1]*cumSum[k]- cumMean[k])**2/(cumSum[k] * (1-cumSum[k]))
+
+    sigmaMax = sigma.max()
+    nb = 0
+    kstar = 0
+    for k in range(255):
+        if sigma[k] == sigmaMax:
+            nb += 1
+            kstar += k
+    kstar = kstar/nb
+    sigmaG = 0
+    for k in range(255):
+        sigmaG += ((k-cumMean[254])**2)*hist[k]
+    eta = sigma[kstar]/sigmaG
+
+    for x in range(matrix.shape[0]):
+        for y in range(matrix.shape[1]):
+            if matrix[x][y] < kstar:
+                matrix[x][y] = 0
+            else:
+                matrix[x][y] = 255
+    #eta ?
+    return matrix
+
 
 def detection(matrix, method):
     deltaMat = np.zeros(matrix.shape)
@@ -143,6 +198,8 @@ def detection(matrix, method):
         gx, gy = prewitt_diagonal(matrix)
     elif method == 'sobel_diagonal':
         gx, gy = sobel_diagonal(matrix)
+    elif method == 'otsu':
+        return otsu(matrix)
     elif method == 'mh':
         sigma = 4
         deltaMat = filters.gaussian_filter(matrix, sigma)
@@ -263,6 +320,7 @@ parser.add_argument('--prewitt_diagonal', action='store_true')
 parser.add_argument('--sobel_diagonal', action='store_true')
 parser.add_argument('--mh', action='store_true')
 parser.add_argument('--canny', action='store_true')
+parser.add_argument('--otsu', action='store_true')
 
 args = parser.parse_args()
 
@@ -284,6 +342,8 @@ try:
             method = 'mh'
         elif args.canny:
             method = 'canny'
+        elif args.otsu:
+            method = 'otsu'
 
         newMat = detection(matrix, method)
 
