@@ -23,7 +23,10 @@ def rescale(matrix):
     return matrix
 
 def toBinary(matrix):
-    return matrix/255
+    for x in range(matrix.shape[0]):
+        for y in range(matrix.shape[1]):
+            matrix[x][y] = 1 if matrix[x][y] > 203 else 0
+    return matrix
 
 def hasNeighbour(matrix, x, y, value):
     for i in range(-1,2):
@@ -38,7 +41,6 @@ def hasNeighbour(matrix, x, y, value):
     return False
 
 def dilate(matrix, mask):
-    matrix = toBinary(matrix)
     toAdd = np.zeros(matrix.shape)
     for x in range(matrix.shape[0]):
         for y in range(matrix.shape[1]):
@@ -56,10 +58,9 @@ def dilate(matrix, mask):
     for x in range(matrix.shape[0]):
         for y in range(matrix.shape[1]):
             matrix[x][y] = max(matrix[x][y], toAdd[x][y])
-    return rescale(matrix)
+    return matrix
 
 def erode(matrix, mask):
-    matrix = toBinary(matrix)
     toDel = np.zeros(matrix.shape)
     for x in range(matrix.shape[0]):
         for y in range(matrix.shape[1]):
@@ -77,13 +78,76 @@ def erode(matrix, mask):
     for x in range(matrix.shape[0]):
         for y in range(matrix.shape[1]):
             matrix[x][y] = max(matrix[x][y] - toDel[x][y], 0)
-    return rescale(matrix)
+    return matrix
 
 def open(matrix, mask):
     return dilate(erode(matrix,mask),mask)
 
 def close(matrix, mask):
     return erode(dilate(matrix,mask),mask)
+
+def boundary(matrix, mask):
+    original = matrix.copy()
+    eroded = erode(matrix, mask)
+    diff = original - eroded
+    return diff
+
+def union(mat1, mat2):
+    for x in range(mat1.shape[0]):
+        for y in range(mat1.shape[1]):
+            mat1[x][y] = max(mat1[x][y],mat2[x][y])
+    return mat1
+
+def intersection(mat1, mat2):
+    for x in range(mat1.shape[0]):
+        for y in range(mat1.shape[1]):
+            mat1[x][y] = min(mat1[x][y],mat2[x][y])
+    return mat1
+
+def filling(matrix, x, y):
+
+    mask = np.array([[0,1,0],
+                    [1,1,1],
+                    [0,1,0]])
+
+    negative = np.ones(matrix.shape) - matrix
+
+    start = np.zeros(matrix.shape)
+    start[x][y] = 1
+
+    current = start
+
+    iter = 1
+    while(True):
+        print("iteration : ", iter)
+        iter += 1
+        #if iter == 20:
+            #return union(current,matrix)
+        old = current.copy()
+        current = dilate(current, mask)
+        current = intersection(current, negative)
+        if np.array_equal(old,current):
+            return union(current,matrix)
+
+def extraction(matrix, x, y):
+
+    mask = np.ones((3,3))
+    start = np.zeros(matrix.shape)
+    start[x][y] = 1
+
+    current = start
+
+    iter = 1
+    while(True):
+        print("iteration : ", iter)
+        iter += 1
+        #if iter == 100:
+            #return current
+        old = current.copy()
+        current = dilate(current, mask)
+        current = intersection(current, matrix)
+        if np.array_equal(old,current):
+            return current
 
 parser = argparse.ArgumentParser(description='Morphological image processing')
 
@@ -94,11 +158,16 @@ parser.add_argument('--erode', action='store_true')
 parser.add_argument('--open', action='store_true')
 parser.add_argument('--close', action='store_true')
 
+parser.add_argument('--boundary', action='store_true')
+parser.add_argument('--filling', action='store_true')
+parser.add_argument('--extraction', action='store_true')
+
 args = parser.parse_args()
 
 try:
     with Image.open(args.image) as im:
         matrix = getMatrix(im)
+        matrix = toBinary(matrix)
 
         mask = np.ones((3,3))
         if args.dilate:
@@ -109,6 +178,14 @@ try:
             newMat = open(matrix, mask)
         if args.close:
             newMat = close(matrix, mask)
+        if args.boundary:
+            newMat = boundary(matrix, mask)
+        if args.filling:
+            newMat = filling(matrix, 50, 50)
+        if args.extraction:
+            newMat = extraction(matrix, 160, 356)
+
+        newMat = rescale(newMat)
 
         newIm = Image.new(im.mode, im.size)
         newIm.putdata(getData(newMat))
