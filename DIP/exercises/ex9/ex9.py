@@ -24,14 +24,16 @@ def rescale(matrix):
 
 def detection(matrix, method):
     deltaMat = np.zeros(matrix.shape)
-    for x in range(matrix.shape[0]):
-        for y in range(matrix.shape[1]):
-            if method == 'roberts':
+    if method == 'roberts':
+        for x in range(matrix.shape[0]):
+            for y in range(matrix.shape[1]):
                 try:
                     deltaMat[x][y] = abs(matrix[x+1][y+1] - matrix[x][y]) + abs(matrix[x+1][y] - matrix[x][y+1])
                 except IndexError:
                     deltaMat[x][y] = 0
-            elif method == 'prewitt':
+    elif method == 'prewitt':
+        for x in range(matrix.shape[0]):
+            for y in range(matrix.shape[1]):
                 try:
                     if(x-1 < 0 or y-1 < 0):
                         raise IndexError('Negative value')
@@ -50,7 +52,9 @@ def detection(matrix, method):
 
                 except IndexError:
                     deltaMat[x][y] = 0
-            elif method == 'sobel':
+    elif method == 'sobel':
+        for x in range(matrix.shape[0]):
+            for y in range(matrix.shape[1]):
                 try:
                     if(x-1 < 0 or y-1 < 0):
                         raise IndexError('Negative value')
@@ -69,6 +73,48 @@ def detection(matrix, method):
 
                 except IndexError:
                     deltaMat[x][y] = 0
+    elif method == 'prewitt_diagonal':
+        for x in range(matrix.shape[0]):
+            for y in range(matrix.shape[1]):
+                try:
+                    if(x-1 < 0 or y-1 < 0):
+                        raise IndexError('Negative value')
+                    deltaMat[x][y] = (abs(matrix[x-1][y]
+                                        + matrix[x-1][y+1]
+                                        + matrix[x][y+1]
+                                        - matrix[x][y-1]
+                                        - matrix[x+1][y-1]
+                                        - matrix[x+1][y])
+                                        + abs(matrix[x][y+1]
+                                        + matrix[x+1][y+1]
+                                        + matrix[x+1][y]
+                                        - matrix[x][y-1]
+                                        - matrix[x-1][y-1]
+                                        - matrix[x-1][y]))
+
+                except IndexError:
+                    deltaMat[x][y] = 0
+    elif method == 'sobel_diagonal':
+        for x in range(matrix.shape[0]):
+            for y in range(matrix.shape[1]):
+                try:
+                    if(x-1 < 0 or y-1 < 0):
+                        raise IndexError('Negative value')
+                    deltaMat[x][y] = (abs(matrix[x-1][y]
+                                        + 2*matrix[x-1][y+1]
+                                        + matrix[x][y+1]
+                                        - matrix[x][y-1]
+                                        - 2*matrix[x+1][y-1]
+                                        - matrix[x+1][y])
+                                        + abs(matrix[x][y+1]
+                                        + 2*matrix[x+1][y+1]
+                                        + matrix[x+1][y]
+                                        - matrix[x][y-1]
+                                        - 2*matrix[x-1][y-1]
+                                        - matrix[x-1][y]))
+
+                except IndexError:
+                    deltaMat[x][y] = 0
     return deltaMat
 
 
@@ -80,6 +126,8 @@ parser.add_argument('image')
 parser.add_argument('--roberts', action='store_true')
 parser.add_argument('--prewitt', action='store_true')
 parser.add_argument('--sobel', action='store_true')
+parser.add_argument('--prewitt_diagonal', action='store_true')
+parser.add_argument('--sobel_diagonal', action='store_true')
 
 args = parser.parse_args()
 
@@ -93,6 +141,10 @@ try:
             method = 'prewitt'
         elif args.sobel:
             method = 'sobel'
+        elif args.prewitt_diagonal:
+            method = 'prewitt_diagonal'
+        elif args.sobel_diagonal:
+            method = 'sobel_diagonal'
 
         newMat = detection(matrix, method)
 
