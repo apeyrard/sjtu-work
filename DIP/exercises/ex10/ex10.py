@@ -227,16 +227,126 @@ def boundary(matrix):
         b = new
         sequence.append(b)
 
+
+
     boundary = np.zeros(matrix.shape)
     for item in sequence:
         boundary[item] = 255
+    return boundary, sequence
 
-    return boundary
+def resampling(matrix, sequence, size=50):
+    newMat = np.zeros(matrix.shape)
+    newSeq = []
+    for item in sequence:
+        newItem = ((round(item[0]/size)*size,round(item[1]/size)*size))
+        if not newItem in newSeq:
+            newSeq.append(newItem)
+
+    for item in newSeq:
+        newMat[item] = 255
+
+    #find top left in sequence
+    top = None
+    left = None
+    topleft = None
+    for item in newSeq:
+        if top is None or item[0] < top:
+            top = item[0]
+            left = item[1]
+            topleft = item
+        elif item[0] == top:
+            if left is None or item[1] < left:
+                left = item[1]
+                topleft = item
+
+    #shift until topleft at beginning
+    while newSeq[0] != topleft:
+        newSeq.append(newSeq[0])
+        newSeq.pop(0)
+
+    return newMat, newSeq
+
+def linking(matrix, sequence):
+    newMat = np.zeros(matrix.shape)
+    for i in range(len(sequence)):
+        current = sequence[i]
+        previous = sequence[i-1]
+        if current[0] == previous[0]:
+            if current[1] > previous[1]:
+                for y in range(previous[1], current[1]+1):
+                    newMat[current[0], y] = 255
+            else:
+                for y in range(current[1], previous[1]+1):
+                    newMat[current[0], y] = 255
+        elif current[1] == previous[1]:
+            if current[0] > previous[0]:
+                for x in range(previous[0], current[0]+1):
+                    newMat[x, current[1]] = 255
+            else:
+                for x in range(current[0], previous[0]+1):
+                    newMat[x, current[1]] = 255
+        else:
+            if current[0] > previous[0] and current[1] > previous[1]:
+                for x in range(current[0]+1-previous[0]):
+                    newMat[previous[0]+x, previous[1]+x] = 255
+            elif current[0] > previous[0] and current[1] < previous[1]:
+                for x in range(current[0]+1-previous[0]):
+                    newMat[previous[0]+x, current[1]+x] = 255
+            elif current[0] < previous[0] and current[1] > previous[1]:
+                for x in range(current[1]+1-previous[1]):
+                    newMat[current[0]+x, previous[1]+x] = 255
+            elif current[0] < previous[0] and current[1] < previous[1]:
+                for x in range(current[1]+1-previous[1]):
+                    newMat[current[0]+x, current[1]+x] = 255
+    return newMat
+
+def chain(sequence):
+    #i compare with the precedent so i need to add the first at the end for the boucle
+    sequence.append(sequence[0])
+    chain = ''
+
+    #starting at 1 because the first's precedent doesn't exist
+    for i in range(1, len(sequence)):
+        current = sequence[i]
+        previous = sequence[i-1]
+        if current[0] == previous[0]:
+            if current[1] > previous[1]:
+                chain += '0'
+            else:
+                chain += '4'
+        elif current[1] == previous[1]:
+            if current[0] > previous[0]:
+                chain += '6'
+            else:
+                chain += '2'
+        else:
+            if current[0] > previous[0] and current[1] > previous[1]:
+                chain += '7'
+            elif current[0] > previous[0] and current[1] < previous[1]:
+                chain += '1'
+            elif current[0] < previous[0] and current[1] > previous[1]:
+                chain += '5'
+            elif current[0] < previous[0] and current[1] < previous[1]:
+                chain += '3'
+    return chain
+
+def diff(chain):
+    newChain = ''
+    for i in range(len(chain)-1):
+        current = int(chain[i])
+        new = int(chain[i+1])
+        dist = (new-current)%8
+        newChain += str(dist)
+    return newChain
 
 parser = argparse.ArgumentParser(description='Boundary following')
 
 parser.add_argument('image')
 parser.add_argument('--boundary', action='store_true')
+parser.add_argument('--resampling', action='store_true')
+parser.add_argument('--linking', action='store_true')
+parser.add_argument('--chain', action='store_true')
+parser.add_argument('--chaindiff', action='store_true')
 
 args = parser.parse_args()
 
@@ -245,12 +355,34 @@ try:
         matrix = getMatrix(im)
 
         if args.boundary:
-            newMat = boundary(matrix)
+            newMat, sequence = boundary(matrix)
+            newIm = Image.new(im.mode, im.size)
+            newIm.putdata(getData(newMat))
+            newIm.show()
+        elif args.resampling:
+            newMat, sequence = boundary(matrix)
+            newMat, sequence = resampling(matrix, sequence)
+            newIm = Image.new(im.mode, im.size)
+            newIm.putdata(getData(newMat))
+            newIm.show()
+        elif args.linking:
+            newMat, sequence = boundary(matrix)
+            newMat, sequence = resampling(matrix, sequence)
+            newMat = linking(matrix, sequence)
+            newIm = Image.new(im.mode, im.size)
+            newIm.putdata(getData(newMat))
+            newIm.show()
+        elif args.chain:
+            newMat, sequence = boundary(matrix)
+            newMat, sequence = resampling(matrix, sequence)
+            print(chain(sequence))
+        elif args.chaindiff:
+            newMat, sequence = boundary(matrix)
+            newMat, sequence = resampling(matrix, sequence)
+            print(diff(chain(sequence)))
 
 
-        newIm = Image.new(im.mode, im.size)
-        newIm.putdata(getData(newMat))
-        newIm.show()
+
 
 except FileNotFoundError as e:
     sys.exit("Error : file not found")
