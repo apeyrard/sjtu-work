@@ -21,7 +21,7 @@ def getData(matrix):
 def identity(matrix, x, y, *args):
     return matrix[x][y]
 
-def arithmeticMean(matrix, x, y, m, n):
+def arithmeticMean(matrix, x, y, m, n, *kargs):
     if m%2 ==0 or n%2==0:
         print("must be odd")
     else:
@@ -40,7 +40,7 @@ def arithmeticMean(matrix, x, y, m, n):
                     pass
     return tmp/counter
 
-def geoMean(matrix, x, y, m, n):
+def geoMean(matrix, x, y, m, n, *kargs):
     if m%2 ==0 or n%2==0:
         print("must be odd")
     else:
@@ -59,7 +59,7 @@ def geoMean(matrix, x, y, m, n):
                     pass
     return tmp**(1/counter)*255
 
-def harmoMean(matrix, x, y, m, n):
+def harmoMean(matrix, x, y, m, n, *kargs):
     if m%2 ==0 or n%2==0:
         print("must be odd")
     else:
@@ -91,8 +91,10 @@ def contraMean(matrix, x, y, m, n, order):
                 try:
                     if x+j < 0 or y+k < 0:
                         raise IndexError()
+                    print(order)
                     tmp += (matrix[x+j][y+k]/255)**(order+1)
                     tmp2 += (matrix[x+j][y+k]/255)**(order)
+                    print(tmp, tmp2)
                 except IndexError:
                     pass
     if tmp2 == 0:
@@ -162,9 +164,10 @@ parser = argparse.ArgumentParser(description='Adds uniform noise to image.')
 
 parser.add_argument('image')
 parser.add_argument('filter')
+parser.add_argument('--order', type=float)
 
 args =  parser.parse_args()
-
+aux  = None
 if args.filter == 'identity':
     function = identity
 elif args.filter == 'arith':
@@ -174,6 +177,7 @@ elif args.filter == 'geo':
 elif args.filter == 'harmo':
     function = harmoMean
 elif args.filter == 'contra':
+    aux = args.order
     function = contraMean
 elif args.filter == 'median':
     function = statFilter
@@ -188,6 +192,7 @@ elif args.filter == 'midpoint':
     function = statFilter
     aux = 'midpoint'
 elif args.filter == 'alpha':
+    aux = args.order
     function = alpha
 
 try:
