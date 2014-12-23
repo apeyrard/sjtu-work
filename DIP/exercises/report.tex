@@ -336,5 +336,133 @@ The program filtering.py uses different means of filtering an image.
 
 
 \clearpage
+\section{Exercice 5}
+In exercise 5 we analyze blurring degradation.
+Using "./ex5 blur image output" The program blurs and saves an image.
+By using "./ex5 filter image output", the program enhances a blurred image using the inverse filter.
+\section{Example}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex5/book_cover.jpg}
+	\caption{Original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex5/blurredBook.jpg}
+	\caption{Blurred image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex5/blurredGaussBook.jpg}
+	\caption{Blurred image with gaussian noise of mean 0 variance 650}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex5/filteredBook.jpg}
+	\caption{Enhanced image of the blurred book}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex5/filteredGaussBook.jpg}
+	\caption{Enhanced image of the blurred book with noise}
+\end{figure}
+\clearpage
 
+We can notice that the enhancement with inverse filtering isn't perfect, and is useless with noise.
+
+I apologize for not being able to do the rest of the exercise.
+
+\section{Exercise 6}
+This program is capable of performing rotations, translations and rescaling on an image, using either the nearest neighbor or bilinear interpolation.
+
+Usage :
+--neighbor for nearest neighbor
+--bilinear for bilinear interpolation
+
+--rotate, --rescale, --translate to choose transform
+\subsection{Examples}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex6/ray_trace_bottle.jpg}
+	\caption{Original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex6/rotate26n.jpg}
+	\caption{Image rotated by 26 degrees with nearest neighbor. Command line : ./ex6 --neighbor --rotate image 26}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex6/rotate155b.jpg}
+	\caption{Image rotated by 155 degrees with bilinear interpolation. Command line : ./ex6 --bilinear --rotate image 155}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex6/rescale05.jpg}
+	\caption{Image rescaled by 0.5 with nearest neighbor. Command line : ./ex6 --neighbor --rescale image 0.5}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex6/rescale2.jpg}
+	\caption{Image rescaled by 2 with bilinear interpolation. Command line : ./ex6 --bilinear --rescale image 2}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex6/translate1.jpg}
+	\caption{Image translated by 166.5 -455.3 with nearest neighbor. Command line : ./ex6 --neighbor --translate image 166.5 -455.3}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex6/translate2.jpg}
+	\caption{Image translated by -25.12 65 with bilinear interpolation. Command line : ./ex6 --bilinear --translate image -25.12 65}
+\end{figure}
+\clearpage
+\section{Exercise 7}
+The exercise 7 program can compress an image using the discrete cosine transform and a mask to discard coefficients.
+
+Usage :
+--dct to perform the dct
+--showdiff to show the differences between the original image and the compressed image
+
+--threshold to use the threshold mask instead of the zonal mask.
+\subsection{Examples}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex7/lenna.jpg}
+	\caption{Original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex7/zonal.jpg}
+	\caption{Image compressed using the zonal mask}
+\end{figure}
+\clearpage
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex7/zonaldiff.jpg}
+	\caption{Differences between original and zonal compressed images}
+\end{figure}
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex7/threshold.jpg}
+	\caption{Image compressed using the zonal mask}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex7/thresholddiff.jpg}
+	\caption{Differences between original and zonal compressed images}
+\end{figure}
+
+\clearpage
+
+I wasn't able to do the part of the exercise with wavelets.
+
+\section{Exercise 8}
+The exercise 8 program can perform morphological processing on an image.
+
+
+
+
+\clearpage
 \end{document}

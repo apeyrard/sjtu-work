@@ -6,6 +6,7 @@ import sys
 from PIL import Image
 import numpy as np
 import math
+import argparse
 
 def getMatrix(image):
     data = list(image.getdata())
@@ -127,21 +128,43 @@ def rescale(matrix, scale, method):
                 newMat[x][y] = final
     return newMat
 
+parser = argparse.ArgumentParser(description='Performs geometric transforms on images')
+
+parser.add_argument('image')
+parser.add_argument('--neighbor', action='store_true')
+parser.add_argument('--bilinear', action='store_true')
+parser.add_argument('--rotate', action='store_true')
+parser.add_argument('--translate', action='store_true')
+parser.add_argument('--rescale', action='store_true')
+parser.add_argument('argument', nargs='*')
+
+args = parser.parse_args()
 try:
-    im = Image.open("./ray_trace_bottle.tif")
+    with Image.open("./ray_trace_bottle.tif") as im:
+        matrix = getMatrix(im)
+
+        if args.neighbor:
+            method = 'neighbor'
+        else:
+            method = 'bilinear'
+
+        if args.rotate:
+            args.argument = math.radians(float(args.argument[0]))
+            func = rotate
+        elif args.rescale:
+            args.argument = float(args.argument[0])
+            func = rescale
+        elif args.translate:
+            args.argument = (float(args.argument[0]), float(args.argument[1]))
+            func = translate
+
+        transform = func(matrix, args.argument, method)
+
+        newMat = Image.new(im.mode, im.size)
+
+        newMat.putdata(getData(transform))
+
+        newMat.show()
 except FileNotFoundError as e:
     sys.exit("Error : file not found")
-
-matrix = getMatrix(im)
-
-#method = 'nearest'
-method = 'bilinear'
-transform = rotate(matrix, math.pi/9, method)
-
-newMat = Image.new(im.mode, im.size)
-
-newMat.putdata(getData(transform))
-
-newMat.show()
-
 
