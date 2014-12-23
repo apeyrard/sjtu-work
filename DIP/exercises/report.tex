@@ -11,7 +11,8 @@ I will provide further help on how to call each program.
 \subsection{libraries}
 I used numpy in all of the programs and scipy in some of them. I will detail when scipy is used.
 \section{Exercise 1}
-The program called ex1.py computes the histogram of a greyscale image, and enhances the image using histogram equalization. it displays the enhanced image, the histograms of the default and enhanced images, and the transformation function.
+The program called ex1.py computes the histogram of a greyscale image, and enhances the image using histogram equalization. it displays the enhanced image, the histograms of the default and enhanced images, and the transformation function.\\
+In this exercise, the matplotlib library is used to plot hitograms and functions.
 \subsection{Examples}
 \subsubsection{Fig1.jpg}
 All of the results are obtained using the program with the call "./ex1.py Fig1.jpg"
@@ -72,5 +73,54 @@ All of the results are obtained using the program with the call "./ex1.py Fig2.j
 \clearpage
 
 \section{Exercise 2}
+The program called ex2.py performs several spatial enhancement techniques on a given greyscale image.
+\subsection{Example on skeleton\_orig.tif}
+All of the results are obtained using the program with the call "./ex2.py skeleton\_orig.tif"
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex2/skeleton_orig.jpg}
+	\caption{Original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex2/skeleton_lap.jpg}
+	\caption{Rescaled laplacian of image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex2/skeleton_lap_plus_orig.jpg}
+	\caption{Sum of laplacian and original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex2/skeleton_sobel.jpg}
+	\caption{Sobel gradient of original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex2/skeleton_smmoth_sobel.jpg}
+	\caption{Smoothed Sobel gradient of original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex2/skeleton_product.jpg}
+	\caption{Product of smoothed Sobel gradient and of the previous sum of laplacian and original}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex2/skeleton_final.jpg}
+	\caption{Sum of original image and previous image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex2/skeleton_final.jpg}
+	\caption{Power law of original image, gamma = 0.5, c = 1}
+\end{figure}
+
+\clearpage
+
+\section{Exercise 3}
+
+\clearpage
 
 \end{document}
