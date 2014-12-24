@@ -337,8 +337,8 @@ The program filtering.py uses different means of filtering an image.
 
 \clearpage
 \section{Exercice 5}
-In exercise 5 we analyze blurring degradation.
-Using "./ex5 blur image output" The program blurs and saves an image.
+In exercise 5 we analyze blurring degradation.\\
+Using "./ex5 blur image output" The program blurs and saves an image.\\
 By using "./ex5 filter image output", the program enhances a blurred image using the inverse filter.
 \section{Example}
 \begin{figure}[!ht]
@@ -368,16 +368,16 @@ By using "./ex5 filter image output", the program enhances a blurred image using
 \end{figure}
 \clearpage
 
-We can notice that the enhancement with inverse filtering isn't perfect, and is useless with noise.
+We can notice that the enhancement with inverse filtering isn't perfect, and is useless with noise.\\
 
 I apologize for not being able to do the rest of the exercise.
 
 \section{Exercise 6}
-This program is capable of performing rotations, translations and rescaling on an image, using either the nearest neighbor or bilinear interpolation.
+This program is capable of performing rotations, translations and rescaling on an image, using either the nearest neighbor or bilinear interpolation.\\
 
-Usage :
---neighbor for nearest neighbor
---bilinear for bilinear interpolation
+Usage :\\
+--neighbor for nearest neighbor\\
+--bilinear for bilinear interpolation\\
 
 --rotate, --rescale, --translate to choose transform
 \subsection{Examples}
@@ -418,11 +418,11 @@ Usage :
 \end{figure}
 \clearpage
 \section{Exercise 7}
-The exercise 7 program can compress an image using the discrete cosine transform and a mask to discard coefficients.
+The exercise 7 program can compress an image using the discrete cosine transform and a mask to discard coefficients.\\
 
-Usage :
---dct to perform the dct
---showdiff to show the differences between the original image and the compressed image
+Usage :\\
+--dct to perform the dct\\
+--showdiff to show the differences between the original image and the compressed image\\
 
 --threshold to use the threshold mask instead of the zonal mask.
 \subsection{Examples}
@@ -459,10 +459,272 @@ Usage :
 I wasn't able to do the part of the exercise with wavelets.
 
 \section{Exercise 8}
-The exercise 8 program can perform morphological processing on an image.
+The exercise 8 program can perform morphological processing on an image.\\
 
+Usage :\\ 
+--dilate to use dilation\\
+--erode to use erosion\\
+--open to use opening\\
+--close to use closing\\
 
+--boundary to use boundary extraction\\
+--filling to use hole filling\\
+--extraction for feature extraction
 
+\subsection{Examples}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex8/noisy_fingerprint.jpg}
+	\caption{Original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex8/noisy_dilated.jpg}
+	\caption{Dilated image. Command ./ex8 --dilate image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex8/noisy_eroded.jpg}
+	\caption{Eroded image. Command ./ex8 --erode image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex8/noisy_opened.jpg}
+	\caption{Opened image. Command ./ex8 --open image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex8/noisy_closed.jpg}
+	\caption{Closed image. Command ./ex8 --close image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex8/lincoln.jpg}
+	\caption{Original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex8/lincoln_boundary.jpg}
+	\caption{Boundary of image. Command ./ex8 --boundary image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex8/region.jpg}
+	\caption{Original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex8/region_filled.jpg}
+	\caption{Image filled at position 50 50. Command ./ex8 --filling image 50 50}
+\end{figure}
 
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=150pt]{./ex8/chicken.jpg}
+	\caption{Original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=150pt]{./ex8/chicken_extracted.jpg}
+	\caption{Image thresholded, eroded, and then extracted at position 100 356. Command ./ex8 --extraction image 100 356}
+\end{figure}
 \clearpage
+The program also gives the number of pixels of the extracted component. In this case :  1356 pixels
+\clearpage
+\section{Exercise 9}
+The exercise 9 program can perform image segmentation on an image using edge detectors or thresholding segmentation methods.\\
+
+Usage : \\
+--roberts to use the Roberts edge detectors\\
+--prewitt to use the Prewitt edge detector\\
+--sobel to use the Sobel edge detector\\
+--mh to use the Marr hildreth edge detector\\
+--canny to use the canny edge detector\\
+
+--otsu to use Otsu's threshold segmentation.\\
+--threshold to use the global thresholding method
+\subsection{Examples}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex9/building.jpg}
+	\caption{Original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex9/building_roberts.jpg}
+	\caption{Image obtained using Roberts edge detector. Command : ./ex9 --roberts image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex9/building_prewitt.jpg}
+	\caption{Image obtained using Prewitt edge detector. Command : ./ex9 --prewitt image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex9/building_sobel.jpg}
+	\caption{Image obtained using Sobel edge detector. Command : ./ex9 --sobel image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex9/building_mh.jpg}
+	\caption{Image obtained using Marr Hildreth edge detector. Command : ./ex9 --mh image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex9/building_canny.jpg}
+	\caption{Image obtained using Canny edge detector. Command : ./ex9 --canny image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex9/polymersomes.jpg}
+	\caption{Original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex9/polymersomes_otsu.jpg}
+	\caption{Image obtained using Otsu's method. Command : ./ex9 --otsu image. Obtained $\eta$ : 0.48}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex9/polymersomes_global.jpg}
+	\caption{Image obtained using global thresholding method method. Command : ./ex9 --threshold image.}
+\end{figure}
+\clearpage
+We can see that Otsu's method is better at determining the best threshold value./
+\section{Exercise 10}
+The exercise 10 program can perform boundary following, resampling, and compute the chain code and the difference chain code of a grayscale image.\\
+
+The pca program can use principal component analysis to compress an image and reconstruct it from fewer components.
+
+Usage of ex10: \\
+--boundary to use boundary following\\
+--resampling to use boundary following and resampling\\
+--linking to link the resampled points\\
+--chain to compute the chain code\\
+--chaindiff to compute the difference chain code\\
+
+Usage of pca:
+calling pca automatically reconstructs the 6 images from washington DC from 2 components and also prints the difference images.
+\subsection{Examples}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/noisy_stroke.jpg}
+	\caption{Original image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/noisy_boundary.jpg}
+	\caption{Boundary of the image. Command : ./ex10 --boundary image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/noisy_resample.jpg}
+	\caption{Resampling of the image's boundary. Command : ./ex10 --resampling image}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/noisy_link.jpg}
+	\caption{Linking of the previous image. Command : ./ex10 --linking image}
+\end{figure}
+\clearpage
+The chain code, obtained with ./ex10 --chain image, is 0000606666666646442444242222202202\\
+
+The first difference chain code, obtained with ./ex10 --chaindiff image, is 
+000626000000062606200626000062062\\
+
+Images used for pca :
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/WashingtonDC_Band1.jpg}
+	\caption{Original image 1}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/WashingtonDC_Band2.jpg}
+	\caption{Original image 2}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/WashingtonDC_Band3.jpg}
+	\caption{Original image 3}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/WashingtonDC_Band4.jpg}
+	\caption{Original image 4}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/WashingtonDC_Band5.jpg}
+	\caption{Original image 5}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/WashingtonDC_Band6.jpg}
+	\caption{Original image 6}
+\end{figure}
+\clearpage
+Images obtained with 2 remaining components :
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/Wash1.jpg}
+	\caption{Image 1}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/Wash2.jpg}
+	\caption{Image 2}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/Wash3.jpg}
+	\caption{Image 3}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/Wash4.jpg}
+	\caption{Image 4}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/Wash5.jpg}
+	\caption{Image 5}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/Wash6.jpg}
+	\caption{Image 6}
+\end{figure}
+\clearpage
+Stretched differences images:
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/Wash1diff.jpg}
+	\caption{Difference image 1}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/Wash2diff.jpg}
+	\caption{Difference image 2}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/Wash3diff.jpg}
+	\caption{Difference image 3}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/Wash4diff.jpg}
+	\caption{Difference image 4}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/Wash5diff.jpg}
+	\caption{Difference image 5}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=200pt]{./ex10/Wash6diff.jpg}
+	\caption{Difference image 6}
+\end{figure}
 \end{document}

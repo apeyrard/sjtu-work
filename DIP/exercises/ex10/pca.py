@@ -9,6 +9,7 @@ size = None
 matrix_x = None
 for image in os.listdir('./washington'):
     try:
+        print(image)
         with Image.open(os.path.join('./washington',image)) as im:
             imgVector = np.array(list(im.getdata()))
             imgVector = imgVector.reshape(1, imgVector.shape[0])
@@ -85,7 +86,7 @@ def rescale(matrix):
 
 data = np.vsplit(matrix_x2, 6)
 for i,item in enumerate(data):
-    item = list(item.reshape(item.shape[1]))
+    item = list(rescale(item.reshape(item.shape[1])))
     newIm = Image.new(im.mode, im.size)
     newIm.putdata(item)
     newIm.show()

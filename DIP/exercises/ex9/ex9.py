@@ -182,7 +182,7 @@ def otsu(matrix):
                 matrix[x][y] = 0
             else:
                 matrix[x][y] = 255
-    #eta ?
+    print("eta : ", eta)
     return matrix
 
 
@@ -200,6 +200,39 @@ def detection(matrix, method):
         gx, gy = sobel_diagonal(matrix)
     elif method == 'otsu':
         return otsu(matrix)
+    elif method == 'global':
+        newMat = np.zeros(matrix.shape)
+        T = (matrix.min()+matrix.max())/2
+        T0 = T
+        T1 = T
+        e = 0.01
+        flag = True
+        while flag:
+            T0 = T1
+            inf = 0
+            infNb = 0
+            sup = 0
+            supNb = 0
+            for x in range(matrix.shape[0]):
+                for y in range(matrix.shape[1]):
+                    if matrix[x, y] > T0:
+                        supNb += 1
+                        sup += matrix[x, y]
+                    else:
+                        infNb += 1
+                        inf += matrix[x, y]
+            meanInf = inf/infNb
+            meanSup = sup/supNb
+            T1 = (meanInf + meanSup)/2
+            if abs(T1-T0) < e:
+                flag = False
+                T = T1
+        #real thresholding
+        for x in range(matrix.shape[0]):
+            for y in range(matrix.shape[1]):
+                if matrix[x, y] > T:
+                    newMat[x,y] = 255
+        return newMat
     elif method == 'mh':
         sigma = 4
         deltaMat = filters.gaussian_filter(matrix, sigma)
@@ -321,13 +354,14 @@ parser.add_argument('--sobel_diagonal', action='store_true')
 parser.add_argument('--mh', action='store_true')
 parser.add_argument('--canny', action='store_true')
 parser.add_argument('--otsu', action='store_true')
+parser.add_argument('--threshold', action='store_true' )
 
 args = parser.parse_args()
 
 try:
     with Image.open(args.image) as im:
         matrix = getMatrix(im)
-
+        aux = None
         if args.roberts:
             method = 'roberts'
         elif args.prewitt:
@@ -344,6 +378,8 @@ try:
             method = 'canny'
         elif args.otsu:
             method = 'otsu'
+        elif args.threshold:
+            method = 'global'
 
         newMat = detection(matrix, method)
 

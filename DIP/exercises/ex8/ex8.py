@@ -130,8 +130,8 @@ def filling(matrix, x, y):
             return union(current,matrix)
 
 def extraction(matrix, x, y):
-
     mask = np.ones((3,3))
+    matrix = erode(matrix, mask)
     start = np.zeros(matrix.shape)
     start[x][y] = 1
 
@@ -147,11 +147,11 @@ def extraction(matrix, x, y):
         current = dilate(current, mask)
         current = intersection(current, matrix)
         if np.array_equal(old,current):
-            return current
+            return current, np.count_nonzero(current)
 
 parser = argparse.ArgumentParser(description='Morphological image processing')
 
-parser.add_argument('image')
+parser.add_argument('image', nargs='+')
 parser.add_argument('--dilate', action='store_true')
 parser.add_argument('--erode', action='store_true')
 
@@ -165,7 +165,7 @@ parser.add_argument('--extraction', action='store_true')
 args = parser.parse_args()
 
 try:
-    with Image.open(args.image) as im:
+    with Image.open(args.image[0]) as im:
         matrix = getMatrix(im)
         matrix = toBinary(matrix)
 
@@ -181,9 +181,10 @@ try:
         if args.boundary:
             newMat = boundary(matrix, mask)
         if args.filling:
-            newMat = filling(matrix, 50, 50)
+            newMat = filling(matrix, float(args.image[1]), float(args.image[2]))
         if args.extraction:
-            newMat = extraction(matrix, 160, 356)
+            newMat, nb = extraction(matrix,float(args.image[1]), float(args.image[2]))
+            print("extracted size : ", nb, "pixels")
 
         newMat = rescale(newMat)
 
