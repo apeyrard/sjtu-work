@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
+import math
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
 
+def gauss(x, mu, sigma):
+    diff = (x - mu)
+    return ((1/((2*np.pi)**(D/2)))
+            *(1/(np.linalg.det(sigma)**0.5))
+            *(math.exp(-0.5*(np.dot(np.dot(diff.T,sigma.I),diff)))))
 
 # load training data
 trainFile = open('train.txt', 'r')
@@ -68,25 +75,76 @@ plt.show()
 
 # Covariances
 covars = []
+clusters = [[],[],[],[]]
+for n,point in enumerate(class1):
+    clusters[assign[n]].append(point)
 for i in range(K):
-    covars.append(np.random.random((D,D)))
+    covars.append(np.cov(np.array(clusters[i]).T))
+
+
+# Mixing coefficients
+pi = np.zeros(K)
+for i in range(K):
+    pi[i] = list(assign).count(i) / len(assign)
+
+
+# Convergence criterion
+epsilon = 0.01
+logL = 0
+while(True):
+    # E step
+
+    # Responsibilities
+    resp = np.zeros((len(class1), K), dtype=float)
+    for cluster in range(K):
+        for i,point in enumerate(class1):
+            num = pi[cluster]*gauss(np.matrix(point).T,np.matrix(means[cluster]).T,np.matrix(covars[cluster]))
+            denom = 0
+            for j in range(K):
+                denom += pi[j]*gauss(np.matrix(point).T,np.matrix(means[j]).T,np.matrix(covars[j]))
+            resp[i, cluster] = num/denom
+
+    # M step
+
+    # New means
+    for i in range(K):
+        tmp = 0
+        for n,point in enumerate(class1):
+            tmp += resp[n, i] * point
+        means[i] = (1/sum(resp[:,i])) * tmp
+
+    # New covariances
+    for i in range(K):
+        mean = np.matrix(means[i]).T
+        tmp = 0
+        for n,point in enumerate(class1):
+            point = np.matrix(point).T
+            tmp += resp[n, i] * np.dot((point - mean), (point - mean).T)
+        covars[i] = (1/sum(resp[:,i])) * tmp
+
+    # New mixing coefs
+    for i in range(K):
+        pi[i] = sum(resp[:,i]) / len(class1)
+
+    # Evaluate log likelihood
+    newlogL = 0
+    for n,point in enumerate(class1):
+        tmp = 0
+        for k in range(K):
+            tmp += pi[k] * gauss(np.matrix(point).T, np.matrix(means[k]).T, np.matrix(covars[k]))
+        newlogL += np.log(tmp)
+    print("Log likelihood : ", newlogL)
+    if abs(newlogL - logL) < epsilon:
+        break # criterion satisfied
+
+    logL = newlogL
 
 delta = 0.025
-x = np.arange(-3.0, 3.0, delta)
-y = np.arange(-2.0, 2.0, delta)
+x = np.arange(class1.min(), class1.max(), delta)
+y = np.arange(class1.min(), class1.max(), delta)
 X, Y = np.meshgrid(x, y)
-Z = np.zeros(X.shape)
-for x in range(Z.shape[0]):
-    for y in range(Z.shape[1]):
-        Z[x,y] = x+y
-
-plt.figure()
-CS = plt.contour(X,Y,Z)
+for i in range(K):
+    Z = mlab.bivariate_normal(X, Y,np.sqrt(covars[i][0, 0]), np.sqrt(covars[i][1, 1]), means[i][0], means[i][1], covars[i][1,0])
+    plt.contour(X,Y,Z)
+plt.scatter(class1[:,0], class1[:,1], c=assign)
 plt.show()
-
-
-#plot data
-#plt.scatter(class1[:,0], class1[:,1], c=u'b')
-#plt.scatter(class2[:,0], class2[:,1], c=u'r')
-#plt.scatter(total[:,0], total[:,1], c=u'g')
-#plt.show()
