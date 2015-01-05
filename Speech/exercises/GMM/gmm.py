@@ -60,7 +60,30 @@ plt.scatter(class1[:,0], class1[:,1], c=assign)
 plt.scatter(means[:,0], means[:,1], c=u'g')
 plt.show()
 
-#GMM
+# GMM
+
+# initialisation
+
+# The means are the means computed by k-means
+
+# Covariances
+covars = []
+for i in range(K):
+    covars.append(np.random.random((D,D)))
+
+delta = 0.025
+x = np.arange(-3.0, 3.0, delta)
+y = np.arange(-2.0, 2.0, delta)
+X, Y = np.meshgrid(x, y)
+Z = np.zeros(X.shape)
+for x in range(Z.shape[0]):
+    for y in range(Z.shape[1]):
+        Z[x,y] = x+y
+
+plt.figure()
+CS = plt.contour(X,Y,Z)
+plt.show()
+
 
 #plot data
 #plt.scatter(class1[:,0], class1[:,1], c=u'b')
