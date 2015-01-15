@@ -2,11 +2,22 @@
 # -*- coding: UTF-8 -*-
 
 from subprocess import call
+import argparse
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser(description='Digit recognition')
+    parser.add_argument('nbEval')
+    parser.add_argument('nbReeval')
+
+    args = parser.parse_args()
+
     # First : data preparation
     # Grammar is written in the gram file using the provided HTK high level language
+    with open("gram", 'w+') as f:
+        txt = "$digit = one | two | three | four | five | six | seven | eight | nine | oh | zero;\n"
+        txt += "( sil ( [<$digit sp>] $digit ) sil )\n"
+        f.write(txt)
     call(["./bin/HParse","gram","wdnet"])
     # Thus creating the word network in the file wdnet
 
@@ -15,8 +26,10 @@ if __name__ == "__main__":
     # using HCopy
     # The mapping file were modified
     # I added the relative position of the folders
+    call(["mkdir","-p","mfcc/train"])
     call(["./bin/HCopy","-C", "./cfgs/config_hcopy", "-S", "./mapping/train.mapping"])
 
+    call(["mkdir","-p","hmm0"])
     call(["./bin/HCompV", "-C", "cfgs/config_tr", "-f", "0.01", "-m", "-S", "train.scp", "-M", "hmm0", "proto"])
 
     # We then need to create the file monophone0 and monophone1
@@ -53,7 +66,7 @@ if __name__ == "__main__":
                 f.write(txt)
 
     # Reestimate nb times. nb > 0
-    nb = 3
+    nb = int(args.nbEval)
     for i in range(nb):
         source = "hmm" + str(i)
         dest = "hmm" + str(i+1)
@@ -68,27 +81,34 @@ if __name__ == "__main__":
     call(["cp", src + "/hmmdefs", dest+"/hmmdefs"])
     with open(dest+"/hmmdefs", 'a') as f:
         f.write("~h \"sp\"\n")
-        f.write("<BEGINHMM>\n")
-        f.write("<NUMSTATES> 3\n")
-        f.write("<STATE> 2\n")
+        #f.write("<BEGINHMM>\n")
+        #f.write("<NUMSTATES> 3\n")
+        #f.write("<STATE> 2\n")
         with open(src+"/hmmdefs", 'r') as source:
             while(True):
                 if source.readline().split()[-1] == "\"sil\"": # find sil model
                     break
-            while(True):
-                if source.readline() == "<STATE> 3\n": #find center state
-                    break
+            #while(True):
+                #if source.readline() == "<STATE> 3\n": #find center state
+                    #break
+            #while(True):
+                #line = source.readline()
+                #if line == "<STATE> 4\n":
+                    #break
+                #else:
+                    #f.write(line)
+        #f.write("<TRANSP> 3\n")
+        #f.write("0.0 0.6 0.4\n")
+        #f.write("0.0 0.6 0.4\n")
+        #f.write("0.0 0.0 0.0\n")
+        #f.write("<ENDHMM>\n")
             while(True):
                 line = source.readline()
-                if line == "<STATE> 4\n":
+                if line.split()[0] == "~h":
                     break
                 else:
                     f.write(line)
-        f.write("<TRANSP> 3\n")
-        f.write("1.0 0.0 0.0\n")
-        f.write("0.0 1.0 0.0\n")
-        f.write("0.0 0.0 1.0\n")
-        f.write("<ENDHMM>\n")
+
 
     # create sil.hed
     with open("sil.hed", 'w+') as f:
@@ -104,10 +124,20 @@ if __name__ == "__main__":
 
 
     # Reestimate add times. add > 0
-    add = 2
+    add = int(args.nbReeval)
     for i in range(add):
         source = "hmm" + str(nb+i+2)
         dest = "hmm" + str(nb+i+3)
         call(["mkdir","-p",dest])
-        call(["bin/HERest", "-C", "cfgs/config_tr", "-I", "label/train.nosp.mlf", "-t", "250.0", "150.0", "1000.0", "-S", "train.scp", "-H", source + "/macros", "-H", source + "/hmmdefs", "-M", dest, "monophones0"])
+        call(["bin/HERest", "-C", "cfgs/config_tr", "-I", "label/train.all.mlf", "-t", "250.0", "150.0", "1000.0", "-S", "train.scp", "-H", source + "/macros", "-H", source + "/hmmdefs", "-M", dest, "monophones1"])
 
+
+    # Testing
+    call(["mkdir","-p","mfcc/dev"])
+    call(["./bin/HCopy","-C", "./cfgs/config_hcopy", "-S", "./mapping/dev.mapping"])
+
+    src = "hmm" + str(nb + add + 2)
+    call(["bin/HVite", "-H", src+"/macros", "-H", src+"/hmmdefs", "-S", "dev.scp", "-l", "'*'", "-i", "recout.mlf", "-w", "wdnet", "-p", "0.0", "-s", "5.0", "dict", "word.list"])
+
+    # verif
+    call(["bin/HResults", "-I", "label/dev.ref.mlf", "word.list", "recout.mlf"])

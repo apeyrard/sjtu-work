@@ -1,3 +1,2 @@
-$digit = ONE | TWO | THREE | FOUR | FIVE |
-         SIX | SEVEN | EIGHT | NINE | OH | ZERO;
-( SENT-START ( <$digit> ) SENT-END )
+$digit = one | two | three | four | five | six | seven | eight | nine | oh | zero;
+( sil ( [<$digit sp>] $digit ) sil )

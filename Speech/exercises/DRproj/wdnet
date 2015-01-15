@@ -1,54 +1,101 @@
 VERSION=1.0
-N=16   L=36   
-I=0    W=SENT-END            
-I=1    W=ZERO                
-I=2    W=!NULL               
-I=3    W=OH                  
-I=4    W=NINE                
-I=5    W=EIGHT               
-I=6    W=SEVEN               
-I=7    W=SIX                 
-I=8    W=FIVE                
-I=9    W=FOUR                
-I=10   W=THREE               
-I=11   W=TWO                 
-I=12   W=ONE                 
-I=13   W=SENT-START          
-I=14   W=!NULL               
-I=15   W=!NULL               
-J=0     S=2    E=0    
-J=1     S=2    E=1    
-J=2     S=13   E=1    
-J=3     S=1    E=2    
-J=4     S=3    E=2    
-J=5     S=4    E=2    
-J=6     S=5    E=2    
-J=7     S=6    E=2    
-J=8     S=7    E=2    
-J=9     S=8    E=2    
-J=10    S=9    E=2    
-J=11    S=10   E=2    
-J=12    S=11   E=2    
-J=13    S=12   E=2    
-J=14    S=2    E=3    
-J=15    S=13   E=3    
-J=16    S=2    E=4    
-J=17    S=13   E=4    
-J=18    S=2    E=5    
-J=19    S=13   E=5    
-J=20    S=2    E=6    
-J=21    S=13   E=6    
-J=22    S=2    E=7    
-J=23    S=13   E=7    
-J=24    S=2    E=8    
-J=25    S=13   E=8    
-J=26    S=2    E=9    
-J=27    S=13   E=9    
-J=28    S=2    E=10   
-J=29    S=13   E=10   
-J=30    S=2    E=11   
-J=31    S=13   E=11   
-J=32    S=2    E=12   
-J=33    S=13   E=12   
-J=34    S=15   E=13   
-J=35    S=0    E=14   
+N=29   L=70   
+I=0    W=!NULL               
+I=1    W=!NULL               
+I=2    W=sil                 
+I=3    W=one                 
+I=4    W=!NULL               
+I=5    W=two                 
+I=6    W=three               
+I=7    W=four                
+I=8    W=five                
+I=9    W=six                 
+I=10   W=seven               
+I=11   W=eight               
+I=12   W=nine                
+I=13   W=oh                  
+I=14   W=zero                
+I=15   W=sp                  
+I=16   W=one                 
+I=17   W=!NULL               
+I=18   W=two                 
+I=19   W=three               
+I=20   W=four                
+I=21   W=five                
+I=22   W=six                 
+I=23   W=seven               
+I=24   W=eight               
+I=25   W=nine                
+I=26   W=oh                  
+I=27   W=zero                
+I=28   W=sil                 
+J=0     S=28   E=1    
+J=1     S=0    E=2    
+J=2     S=2    E=3    
+J=3     S=15   E=3    
+J=4     S=3    E=4    
+J=5     S=5    E=4    
+J=6     S=6    E=4    
+J=7     S=7    E=4    
+J=8     S=8    E=4    
+J=9     S=9    E=4    
+J=10    S=10   E=4    
+J=11    S=11   E=4    
+J=12    S=12   E=4    
+J=13    S=13   E=4    
+J=14    S=14   E=4    
+J=15    S=2    E=5    
+J=16    S=15   E=5    
+J=17    S=2    E=6    
+J=18    S=15   E=6    
+J=19    S=2    E=7    
+J=20    S=15   E=7    
+J=21    S=2    E=8    
+J=22    S=15   E=8    
+J=23    S=2    E=9    
+J=24    S=15   E=9    
+J=25    S=2    E=10   
+J=26    S=15   E=10   
+J=27    S=2    E=11   
+J=28    S=15   E=11   
+J=29    S=2    E=12   
+J=30    S=15   E=12   
+J=31    S=2    E=13   
+J=32    S=15   E=13   
+J=33    S=2    E=14   
+J=34    S=15   E=14   
+J=35    S=4    E=15   
+J=36    S=2    E=16   
+J=37    S=15   E=16   
+J=38    S=16   E=17   
+J=39    S=18   E=17   
+J=40    S=19   E=17   
+J=41    S=20   E=17   
+J=42    S=21   E=17   
+J=43    S=22   E=17   
+J=44    S=23   E=17   
+J=45    S=24   E=17   
+J=46    S=25   E=17   
+J=47    S=26   E=17   
+J=48    S=27   E=17   
+J=49    S=2    E=18   
+J=50    S=15   E=18   
+J=51    S=2    E=19   
+J=52    S=15   E=19   
+J=53    S=2    E=20   
+J=54    S=15   E=20   
+J=55    S=2    E=21   
+J=56    S=15   E=21   
+J=57    S=2    E=22   
+J=58    S=15   E=22   
+J=59    S=2    E=23   
+J=60    S=15   E=23   
+J=61    S=2    E=24   
+J=62    S=15   E=24   
+J=63    S=2    E=25   
+J=64    S=15   E=25   
+J=65    S=2    E=26   
+J=66    S=15   E=26   
+J=67    S=2    E=27   
+J=68    S=15   E=27   
+J=69    S=17   E=28   
