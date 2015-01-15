@@ -1,38 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-from subprocess import call
+import subprocess
 import argparse
 
-if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser(description='Digit recognition')
-    parser.add_argument('nbEval')
-    parser.add_argument('nbReeval')
-
-    args = parser.parse_args()
-
-    # First : data preparation
-    # Grammar is written in the gram file using the provided HTK high level language
+def createGrammar(path):
     with open("gram", 'w+') as f:
-        txt = "$digit = one | two | three | four | five | six | seven | eight | nine | oh | zero;\n"
-        txt += "( sil ( [<$digit sp>] $digit ) sil )\n"
-        f.write(txt)
-    call(["./bin/HParse","gram","wdnet"])
-    # Thus creating the word network in the file wdnet
+        f.write("$digit = one | two | three | four | five | six | seven | eight | nine | oh | zero;\n")
+        f.write("( sil ( [<$digit sp>] $digit ) sil )\n")
 
-
-    # feature extraction
-    # using HCopy
-    # The mapping file were modified
-    # I added the relative position of the folders
-    call(["mkdir","-p","mfcc/train"])
-    call(["./bin/HCopy","-C", "./cfgs/config_hcopy", "-S", "./mapping/train.mapping"])
-
-    call(["mkdir","-p","hmm0"])
-    call(["./bin/HCompV", "-C", "cfgs/config_tr", "-f", "0.01", "-m", "-S", "train.scp", "-M", "hmm0", "proto"])
-
-    # We then need to create the file monophone0 and monophone1
+def createMonophones():
     with open("monophones1", 'w+') as f:
         txt = ("eight           eight\nfive            five\nfour            four\nnine            nine\noh              oh\none             one\nseven           seven\nsil             sil\nsix             six\nsp              sp\nthree           three\ntwo             two\nzero            zero\n")
         f.write(txt)
@@ -40,45 +17,38 @@ if __name__ == "__main__":
         txt = ("eight           eight\nfive            five\nfour            four\nnine            nine\noh              oh\none             one\nseven           seven\nsil             sil\nsix             six\nthree           three\ntwo             two\nzero            zero\n")
         f.write(txt)
 
-
-    # We also need to create macros and hmmdefs
-    with open("hmm0/macros","w+") as f:
-        with open("proto",'r') as source:
+def createMacro(folder, proto):
+    with open(''.join([folder, "/macros"]),"w+") as f:
+        with open(proto,'r') as source:
             line = source.readline()
             f.write(line)
-        with open("hmm0/vFloors",'r') as source:
+        with open(''.join([folder,"/vFloors"]),'r') as source:
             f.write("~v \"varFloor1\"\n")
             source.readline()
             f.write(source.readline())
             f.write(source.readline())
-    with open("hmm0/hmmdefs", "w+") as f:
-        with open("hmm0/proto", 'r') as proto:
+
+def createHmmdefs(folder):
+    with open(''.join([folder, "/hmmdefs"]), "w+") as f:
+        with open(''.join([folder, "/proto"]), 'r') as proto:
             txt = ""
             #Skip first 4 lines
             for i in range(4):
                 proto.readline()
             for line in proto:
                 txt += line
-
         with open("monophones0", 'r') as words:
             for line in words:
                 f.write("~h \"" + line.split()[-1]+"\"\n")
                 f.write(txt)
 
-    # Reestimate nb times. nb > 0
-    nb = int(args.nbEval)
-    for i in range(nb):
-        source = "hmm" + str(i)
-        dest = "hmm" + str(i+1)
-        call(["mkdir","-p",dest])
-        call(["bin/HERest", "-C", "cfgs/config_tr", "-I", "label/train.nosp.mlf", "-t", "250.0", "150.0", "1000.0", "-S", "train.scp", "-H", source + "/macros", "-H", source + "/hmmdefs", "-M", dest, "monophones0"])
-
+def addSp(nb):
     # adding transitions to sil HMM
     src = "hmm" + str(nb)
     dest = "hmm" + str(nb+1)
-    call(["mkdir","-p",dest])
-    call(["cp", src + "/macros", dest+"/macros"])
-    call(["cp", src + "/hmmdefs", dest+"/hmmdefs"])
+    mkdir(dest)
+    subprocess.call(["cp", src + "/macros", dest+"/macros"])
+    subprocess.call(["cp", src + "/hmmdefs", dest+"/hmmdefs"])
     with open(dest+"/hmmdefs", 'a') as f:
         f.write("~h \"sp\"\n")
         #f.write("<BEGINHMM>\n")
@@ -109,7 +79,6 @@ if __name__ == "__main__":
                 else:
                     f.write(line)
 
-
     # create sil.hed
     with open("sil.hed", 'w+') as f:
         f.write("AT 2 4 0.2 {sil.transP}\n")
@@ -119,25 +88,87 @@ if __name__ == "__main__":
 
     src = "hmm" + str(nb+1)
     dest = "hmm" + str(nb+2)
-    call(["mkdir","-p",dest])
-    call(["bin/HHEd", "-H", src+"/macros", "-H", src+"/hmmdefs", "-M", dest, "sil.hed", "monophones1"])
+    mkdir(dest)
+    subprocess.call(["bin/HHEd", "-H", src+"/macros", "-H", src+"/hmmdefs", "-M", dest, "sil.hed", "monophones1"])
 
+def HParse(gramPath, outPath):
+    subprocess.call(["./bin/HParse", gramPath, outPath])
+
+def mkdir(path):
+    subprocess.call(["mkdir","-p",path])
+
+def HCopy(mapPath):
+    subprocess.call(["./bin/HCopy","-C", "cfgs/config_hcopy", "-S", mapPath])
+
+def HCompV(scpPath, outFolder, proto):
+    subprocess.call(["./bin/HCompV", "-C", "cfgs/config_tr", "-f", "0.01", "-m", "-S", scpPath, "-M", outFolder, proto])
+
+def HERest(mlfPath, scpPath, source, dest, dictionnary):
+    subprocess.call(["bin/HERest", "-C", "cfgs/config_tr", "-I", mlfPath, "-t", "250.0", "150.0", "1000.0", "-S", scpPath, "-H", source + "/macros", "-H", source + "/hmmdefs", "-M", dest, dictionnary])
+
+def HVite(src, scpPath, mlfOut, wdnet, dictionnary, wordlist):
+    subprocess.call(["bin/HVite", "-C", "cfgs/config_tr", "-H", src+"/macros", "-H", src+"/hmmdefs", "-S", scpPath, "-l", "'*'", "-i", mlfOut, "-w", wdnet, "-p", "0.0", "-s", "5.0", dictionnary, wordlist])
+
+def HResults(refPath, wordlist, mlfPath):
+    subprocess.call(["bin/HResults", "-I", refPath, wordlist, mlfPath])
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description='Digit recognition')
+    parser.add_argument('nbEval')
+    parser.add_argument('nbReeval')
+
+    args = parser.parse_args()
+
+    # First : data preparation
+    # Grammar is written in the gram file using the provided HTK high level language
+    createGrammar("gram")
+
+    HParse("gram","wdnet")
+    # Thus creating the word network in the file wdnet
+
+    # feature extraction
+    # using HCopy
+    # The mapping file were modified
+    # I added the relative position of the folders
+    mkdir("mfcc/train")
+
+    HCopy("./mapping/train.mapping")
+
+    mkdir("hmm0")
+    HCompV("train.scp", "hmm0", "proto")
+
+    # We then need to create the file monophone0 and monophone1
+    createMonophones()
+
+    # We also need to create macros and hmmdefs
+    createMacro("hmm0", "proto")
+    createHmmdefs("hmm0")
+
+    # Reestimate nb times. nb > 0
+    nb = int(args.nbEval)
+    for i in range(nb):
+        source = "hmm" + str(i)
+        dest = "hmm" + str(i+1)
+        mkdir(dest)
+        HERest("label/train.nosp.mlf", "train.scp", source, dest, "monophones0")
+
+    addSp(nb)
 
     # Reestimate add times. add > 0
     add = int(args.nbReeval)
     for i in range(add):
         source = "hmm" + str(nb+i+2)
         dest = "hmm" + str(nb+i+3)
-        call(["mkdir","-p",dest])
-        call(["bin/HERest", "-C", "cfgs/config_tr", "-I", "label/train.all.mlf", "-t", "250.0", "150.0", "1000.0", "-S", "train.scp", "-H", source + "/macros", "-H", source + "/hmmdefs", "-M", dest, "monophones1"])
-
+        mkdir(dest)
+        HERest("label/train.all.mlf", "train.scp", source, dest, "monophones1")
 
     # Testing
-    call(["mkdir","-p","mfcc/dev"])
-    call(["./bin/HCopy","-C", "./cfgs/config_hcopy", "-S", "./mapping/dev.mapping"])
+    mkdir("mfcc/dev")
+    HCopy("mapping/dev.mapping")
 
     src = "hmm" + str(nb + add + 2)
-    call(["bin/HVite", "-H", src+"/macros", "-H", src+"/hmmdefs", "-S", "dev.scp", "-l", "'*'", "-i", "recout.mlf", "-w", "wdnet", "-p", "0.0", "-s", "5.0", "dict", "word.list"])
+    HVite(src, "dev.scp", "recout.mlf", "wdnet", "monophones1", "word.list")
 
     # verif
-    call(["bin/HResults", "-I", "label/dev.ref.mlf", "word.list", "recout.mlf"])
+    HResults("label/dev.ref.mlf", "word.list", "recout.mlf")
